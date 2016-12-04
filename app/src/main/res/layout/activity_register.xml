@@ -37,7 +37,7 @@
         android:fontFamily="sans-serif" />
 
     <Button
-        android:text="Sign in with Our App"
+        android:text="Sign In"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@+id/txtPassword"

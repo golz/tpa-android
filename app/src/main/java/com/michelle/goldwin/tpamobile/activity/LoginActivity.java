@@ -58,15 +58,15 @@ public class LoginActivity extends AppCompatActivity {
         btnFacebook = (LoginButton) findViewById(R.id.btnFacebook);
 
         progressDialog = new ProgressDialog(this);
-
         firebaseAuth = FirebaseAuth.getInstance();
+
+        //Redirect here
         if(firebaseAuth.getCurrentUser() != null)
         {
             //Redirecting if user has been logged in before
             finish();
             startActivity(new Intent(getApplicationContext(),HomeActivity.class));
         }
-
         callbackManager = CallbackManager.Factory.create();
         /* END INITIALIZE */
 
@@ -98,7 +98,7 @@ public class LoginActivity extends AppCompatActivity {
                             }
                             else
                             {
-                                Toast.makeText(LoginActivity.this, "Login failed", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(LoginActivity.this, task.getException().getMessage(), Toast.LENGTH_SHORT).show();
                             }
                         }
                     });
@@ -122,10 +122,11 @@ public class LoginActivity extends AppCompatActivity {
                 firebaseAuth.signInWithCredential(credential).addOnCompleteListener(LoginActivity.this, new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
-                        finish();
-                        startActivity(new Intent(LoginActivity.this,HomeActivity.class));
+
                     }
                 });
+                finish();
+                startActivity(new Intent(LoginActivity.this,HomeActivity.class));
             }
             @Override
             public void onCancel() {

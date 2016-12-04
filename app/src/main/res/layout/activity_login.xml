@@ -44,17 +44,13 @@
         android:singleLine="true"
         android:selectAllOnFocus="true" />
 
-    <Button
-        android:text="Sign in with Facebook"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+    <com.facebook.login.widget.LoginButton
         android:id="@+id/btnFacebook"
-        tools:textColor="@android:color/white"
-        android:background="@color/colorFacebook"
-        android:layout_marginBottom="18dp"
-        android:layout_above="@+id/lblOr"
-        android:layout_alignParentStart="true"
-        android:textColor="@android:color/white" />
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="30dp"
+        android:layout_marginBottom="30dp" />
 
     <TextView
         android:text="OR"

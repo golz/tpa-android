@@ -96,7 +96,7 @@ public class HomeActivity extends AppCompatActivity
         /* END CALL */
 
 
-        lblUserEmail.setText("TEST");
+        lblUserEmail.setText("TRALLALALA");
         /* COMBINE */
         viewPager.setAdapter(viewPagerAdapter);
         tabLayout.setupWithViewPager(viewPager);

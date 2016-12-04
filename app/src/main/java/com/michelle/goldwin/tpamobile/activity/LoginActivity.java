@@ -27,6 +27,7 @@ import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FacebookAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.michelle.goldwin.tpamobile.R;
 
 import java.util.Arrays;
@@ -59,16 +60,19 @@ public class LoginActivity extends AppCompatActivity {
 
         progressDialog = new ProgressDialog(this);
         firebaseAuth = FirebaseAuth.getInstance();
-
-        //Redirect here
-        if(firebaseAuth.getCurrentUser() != null)
-        {
-            //Redirecting if user has been logged in before
-            finish();
-            startActivity(new Intent(getApplicationContext(),HomeActivity.class));
-        }
         callbackManager = CallbackManager.Factory.create();
+
+                /* BEGIN MIDDLE AUTH REDIRECT */
+                if(firebaseAuth.getCurrentUser() != null)
+                {
+                    //Redirecting if user has been logged in before
+                    finish();
+                    startActivity(new Intent(getApplicationContext(),HomeActivity.class));
+                }
+                /* END MIDDLE AUTH REDIRECT */
+
         /* END INITIALIZE */
+
 
         /* BEGIN ACTION */
         btnSignin.setOnClickListener(new View.OnClickListener() {
@@ -103,8 +107,6 @@ public class LoginActivity extends AppCompatActivity {
                         }
                     });
                     /* END TO LOGIN TO FIREBASE*/
-                    //Login With Firebase then display home
-
                 }
             }
         });
@@ -118,15 +120,15 @@ public class LoginActivity extends AppCompatActivity {
         btnFacebook.registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
             @Override
             public void onSuccess(LoginResult loginResult) {
+
                 AuthCredential credential = FacebookAuthProvider.getCredential(loginResult.getAccessToken().getToken());
                 firebaseAuth.signInWithCredential(credential).addOnCompleteListener(LoginActivity.this, new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
-
+                        finish();
+                        startActivity(new Intent(getApplicationContext(),HomeActivity.class));
                     }
                 });
-                finish();
-                startActivity(new Intent(LoginActivity.this,HomeActivity.class));
             }
             @Override
             public void onCancel() {

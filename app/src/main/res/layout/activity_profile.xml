@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/activity_profile"
     android:layout_width="match_parent"
@@ -10,84 +11,105 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="com.michelle.goldwin.tpamobile.activity.ProfileActivity">
 
-    <EditText
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:inputType="textPersonName"
-        android:ems="10"
-        android:id="@+id/txtFullname"
-        android:hint="Fullname"
-        android:layout_marginTop="120dp"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentStart="true"
-        android:textAlignment="center" />
-
-    <EditText
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:inputType="date"
-        android:ems="10"
-        android:layout_marginTop="18dp"
-        android:id="@+id/txtDOB"
-        android:hint="Date of Birth"
-        android:layout_below="@+id/txtFullname"
-        android:layout_alignParentStart="true"
-        android:textAlignment="center" />
-
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/txtDOB"
-        android:layout_marginTop="18dp"
-        android:id="@+id/linearHeightWeight"
-        android:gravity="center">
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:weightSum="1">
+        <ImageView
+            android:layout_width="75dp"
+            android:layout_height="75dp"
+            android:layout_gravity="center_horizontal"
+            android:id="@+id/imgProfile"
+            android:layout_marginTop="18dp"
+            android:textAlignment="center"
+            app:srcCompat="@drawable/com_facebook_profile_picture_blank_square" />
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="textPersonName"
+            android:ems="10"
+            android:id="@+id/txtFullname"
+            android:hint="Fullname"
+            android:layout_below="@+id/img"
+            android:layout_marginTop="18dp"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentStart="true"
+            android:textAlignment="center"
+            android:textSize="18sp" />
 
         <EditText
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:inputType="numberDecimal"
-            android:ems="5"
-            android:layout_alignBaseline="@+id/txtHeight"
-            android:layout_alignBottom="@+id/txtHeight"
-            android:layout_alignParentEnd="true"
-            android:id="@+id/txtHeight"
-            android:hint="Height"
-            android:textAlignment="center" />
+            android:inputType="date"
+            android:ems="10"
+            android:layout_marginTop="18dp"
+            android:id="@+id/txtDOB"
+            android:hint="Date of Birth"
+            android:layout_below="@+id/txtFullname"
+            android:layout_alignParentStart="true"
+            android:textAlignment="center"
+            android:textSize="18sp"
+            android:text="31/12/1980" />
 
-        <EditText
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:inputType="numberDecimal"
-            android:ems="5"
-            android:layout_alignBaseline="@+id/txtWidth"
-            android:layout_alignBottom="@+id/txtWidth"
-            android:layout_alignParentEnd="true"
-            android:id="@+id/txtWeight"
-            android:hint="Weight"
-            android:textAlignment="center" />
+            android:layout_below="@+id/txtDOB"
+            android:layout_marginTop="18dp"
+            android:id="@+id/linearHeightWeight"
+            android:gravity="center">
+
+            <EditText
+                android:layout_height="wrap_content"
+                android:inputType="numberDecimal"
+                android:ems="5"
+                android:layout_alignBaseline="@+id/txtHeight"
+                android:layout_alignBottom="@+id/txtHeight"
+                android:layout_alignParentEnd="true"
+                android:id="@+id/txtHeight"
+                android:hint="Height"
+                android:textAlignment="center"
+                android:layout_width="180dp"
+                android:text="150.0" />
+
+            <EditText
+                android:layout_width="180dp"
+                android:layout_height="wrap_content"
+                android:inputType="numberDecimal"
+                android:ems="5"
+                android:layout_alignBaseline="@+id/txtWidth"
+                android:layout_alignBottom="@+id/txtWidth"
+                android:layout_alignParentEnd="true"
+                android:id="@+id/txtWeight"
+                android:hint="Weight"
+                android:textAlignment="center"
+                android:text="60.0" />
+
+        </LinearLayout>
+
+        <Button
+            android:text="Update My Profile"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/linearHeightWeight"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="18dp"
+            android:id="@+id/btnUpdate"
+            android:textAlignment="center"
+            android:textColor="@android:color/white"
+            android:background="@color/colorPrimaryDark" />
+
+        <Button
+            android:text="Cancel"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/linearHeightWeight"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="18dp"
+            android:id="@+id/btnCancel"
+            android:textAlignment="center"
+            android:textColor="@color/colorPrimaryDark" />
 
     </LinearLayout>
-
-    <Button
-        android:text="Update My Profile"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/linearHeightWeight"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="18dp"
-        android:id="@+id/btnUpdate"
-        android:textAlignment="center"
-        android:textColor="@android:color/white"
-        android:background="@color/colorPrimaryDark" />
-
-    <Button
-        android:text="Cancel"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/btnUpdate"
-        android:layout_alignParentStart="true"
-        android:layout_marginTop="18dp"
-        android:id="@+id/btnCancel"
-        android:textColor="@color/colorPrimaryDark" />
-
 </RelativeLayout>

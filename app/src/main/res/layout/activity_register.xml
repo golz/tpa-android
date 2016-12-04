@@ -10,17 +10,40 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="com.michelle.goldwin.tpamobile.activity.RegisterActivity">
 
-    <Button
-        android:text="Sign in with Facebook"
+    <com.facebook.login.widget.LoginButton
+        android:id="@+id/btnFacebook"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/btnFacebook"
-        tools:textColor="@android:color/white"
-        android:background="@color/colorFacebook"
-        android:layout_marginBottom="18dp"
-        android:layout_above="@+id/lblOr"
+        android:layout_gravity="center_horizontal"
+        android:paddingTop="15sp"
+        android:paddingBottom="15sp"
         android:layout_alignParentStart="true"
-        android:textColor="@android:color/white" />
+        android:textSize="14sp"
+        android:fontFamily="sans-serif" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/lblOr"
+        android:text="OR"
+        android:layout_below="@id/btnFacebook"
+        android:layout_marginTop="18dp"
+        android:textAlignment="center"
+        android:textStyle="normal|bold"
+        android:textColor="@color/colorPrimaryDark" />
+
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:id="@+id/txtEmail"
+        android:inputType="textEmailAddress"
+        android:hint="Email"
+        android:layout_below="@+id/lblOr"
+        android:layout_alignParentStart="true"
+        android:layout_marginTop="18dp"
+        android:singleLine="true"
+        android:selectAllOnFocus="true" />
 
     <EditText
         android:layout_width="match_parent"
@@ -59,15 +82,4 @@
         android:textColor="@android:color/white"
         android:background="@color/colorPrimaryDark" />
 
-    <EditText
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:ems="10"
-        android:id="@+id/txtEmail"
-        android:inputType="textEmailAddress"
-        android:hint="Email"
-        android:layout_below="@+id/btnFacebook"
-        android:layout_alignParentStart="true"
-        android:singleLine="true"
-        android:selectAllOnFocus="true" />
 </RelativeLayout>

@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.telecom.Call;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
@@ -24,10 +25,8 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.AuthResult;
-import com.google.firebase.auth.FacebookAuthCredential;
 import com.google.firebase.auth.FacebookAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 import com.michelle.goldwin.tpamobile.R;
 
 import java.util.Arrays;
@@ -37,6 +36,7 @@ public class LoginActivity extends AppCompatActivity {
 
     private EditText txtEmail;
     private EditText txtPassword;
+    private LoginButton btnFacebook;
     private Button btnSignin;
     private Button btnSignup;
 
@@ -50,35 +50,12 @@ public class LoginActivity extends AppCompatActivity {
         FacebookSdk.sdkInitialize(getApplicationContext());
         setContentView(R.layout.activity_login);
 
-
-        callbackManager = CallbackManager.Factory.create();
-        LoginButton loginButton = (LoginButton) findViewById(R.id.btnFacebook);
-        loginButton.setReadPermissions(Arrays.asList("email","public_profile"));
-
-        loginButton.registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
-            @Override
-            public void onSuccess(LoginResult loginResult) {
-                facebookToken(loginResult.getAccessToken());
-
-            }
-
-            @Override
-            public void onCancel() {
-
-            }
-
-            @Override
-            public void onError(FacebookException e) {
-
-            }
-        });
-
-
         /* BEGIN INITIALIZE */
         txtEmail    = (EditText) findViewById(R.id.txtEmail);
         txtPassword = (EditText)findViewById(R.id.txtPassword);
         btnSignin   = (Button) findViewById(R.id.btnSignin);
         btnSignup   = (Button) findViewById(R.id.btnSignup);
+        btnFacebook = (LoginButton) findViewById(R.id.btnFacebook);
 
         progressDialog = new ProgressDialog(this);
 
@@ -89,6 +66,8 @@ public class LoginActivity extends AppCompatActivity {
             finish();
             startActivity(new Intent(getApplicationContext(),HomeActivity.class));
         }
+
+        callbackManager = CallbackManager.Factory.create();
         /* END INITIALIZE */
 
         /* BEGIN ACTION */
@@ -135,29 +114,34 @@ public class LoginActivity extends AppCompatActivity {
                 startActivity(new Intent(getApplicationContext(),RegisterActivity.class));
             }
         });
+        btnFacebook.setReadPermissions(Arrays.asList("email","public_profile"));
+        btnFacebook.registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
+            @Override
+            public void onSuccess(LoginResult loginResult) {
+                AuthCredential credential = FacebookAuthProvider.getCredential(loginResult.getAccessToken().getToken());
+                firebaseAuth.signInWithCredential(credential).addOnCompleteListener(LoginActivity.this, new OnCompleteListener<AuthResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task) {
+                        finish();
+                        startActivity(new Intent(LoginActivity.this,HomeActivity.class));
+                    }
+                });
+            }
+            @Override
+            public void onCancel() {
+
+            }
+            @Override
+            public void onError(FacebookException e) {
+
+            }
+        });
         /* END ACTION */
     }
-
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         callbackManager.onActivityResult(requestCode,resultCode,data);
-
-        FirebaseUser user = firebaseAuth.getCurrentUser();
-        Intent intent = new Intent(LoginActivity.this,HomeActivity.class);
-        startActivity(intent);
         Log.e("data",data.toString());
     }
-
-    public void facebookToken(AccessToken token){
-
-        AuthCredential credential = FacebookAuthProvider.getCredential(token.getToken());
-        firebaseAuth.signInWithCredential(credential).addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
-            @Override
-            public void onComplete(@NonNull Task<AuthResult> task) {
-            }
-        });
-
-    }
-
 }

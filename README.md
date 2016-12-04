@@ -1,4 +1,4 @@
-# tpa-android
+# Welcome to `tpa-android` repository of MSGDCoorporate
 
 # Dont forget to Install Google Play Service and Google Repository
   1. Click Tools > Android > SDK Manager.

@@ -13,6 +13,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.facebook.AccessToken;
 import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
@@ -22,7 +23,9 @@ import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.AuthResult;
+import com.google.firebase.auth.FacebookAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
 import com.michelle.goldwin.tpamobile.R;
 
@@ -33,7 +36,7 @@ public class LoginActivity extends AppCompatActivity {
 
     private EditText txtEmail;
     private EditText txtPassword;
-    private Button btnFacebook;
+    private LoginButton btnFacebook;
     private Button btnSignin;
     private Button btnSignup;
 
@@ -47,35 +50,12 @@ public class LoginActivity extends AppCompatActivity {
         FacebookSdk.sdkInitialize(getApplicationContext());
         setContentView(R.layout.activity_login);
 
-
-        callbackManager = CallbackManager.Factory.create();
-        LoginButton loginButton = (LoginButton) findViewById(R.id.btnFacebook);
-        loginButton.setReadPermissions(Arrays.asList("email","public_profile"));
-
-        loginButton.registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
-            @Override
-            public void onSuccess(LoginResult loginResult) {
-                startActivity(new Intent(LoginActivity.this,HomeActivity.class));
-            }
-
-            @Override
-            public void onCancel() {
-
-            }
-
-            @Override
-            public void onError(FacebookException e) {
-
-            }
-        });
-
-
         /* BEGIN INITIALIZE */
         txtEmail    = (EditText) findViewById(R.id.txtEmail);
         txtPassword = (EditText)findViewById(R.id.txtPassword);
-        btnFacebook = (Button) findViewById(R.id.btnFacebook);
         btnSignin   = (Button) findViewById(R.id.btnSignin);
         btnSignup   = (Button) findViewById(R.id.btnSignup);
+        btnFacebook = (LoginButton) findViewById(R.id.btnFacebook);
 
         progressDialog = new ProgressDialog(this);
 
@@ -86,6 +66,8 @@ public class LoginActivity extends AppCompatActivity {
             finish();
             startActivity(new Intent(getApplicationContext(),HomeActivity.class));
         }
+
+        callbackManager = CallbackManager.Factory.create();
         /* END INITIALIZE */
 
         /* BEGIN ACTION */
@@ -132,9 +114,30 @@ public class LoginActivity extends AppCompatActivity {
                 startActivity(new Intent(getApplicationContext(),RegisterActivity.class));
             }
         });
+        btnFacebook.setReadPermissions(Arrays.asList("email","public_profile"));
+        btnFacebook.registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
+            @Override
+            public void onSuccess(LoginResult loginResult) {
+                AuthCredential credential = FacebookAuthProvider.getCredential(loginResult.getAccessToken().getToken());
+                firebaseAuth.signInWithCredential(credential).addOnCompleteListener(LoginActivity.this, new OnCompleteListener<AuthResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task) {
+                        finish();
+                        startActivity(new Intent(LoginActivity.this,HomeActivity.class));
+                    }
+                });
+            }
+            @Override
+            public void onCancel() {
+
+            }
+            @Override
+            public void onError(FacebookException e) {
+
+            }
+        });
         /* END ACTION */
     }
-
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);

@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "619393040570",
+    "firebase_url": "https://tpa-android.firebaseio.com",
+    "project_id": "tpa-android",
+    "storage_bucket": "tpa-android.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:619393040570:android:200b024fba5c6547",
+        "android_client_info": {
+          "package_name": "com.michelle.goldwin.tpamobile"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "619393040570-7dnl586vrpt1utrgt1i5fmho82rkotrm.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDzhPnl4E8GZUxyQGuwpiPToQJiZKMC3Wk"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -47,14 +47,6 @@ public class HomeActivity extends AppCompatActivity
         tabLayout       = (TabLayout) findViewById(R.id.tabLayout);
         viewPager       = (ViewPager) findViewById(R.id.viewPager);
 
-        /**
-         * There are lblUserFullname and lblUserEmail must be inflated from nav_header_home.xml
-         * Because there are in different layout .xml
-         */
-        View viewNavHeaderHome = LayoutInflater.from(getApplicationContext()).inflate(R.layout.nav_header_home,null);
-        lblUserFullname = (TextView) viewNavHeaderHome.findViewById(R.id.lblUserFullname);
-        lblUserEmail    = (TextView) viewNavHeaderHome.findViewById(R.id.lblUserEmail);
-
         firebaseAuth = FirebaseAuth.getInstance();
         if(firebaseAuth.getCurrentUser() == null)
         {
@@ -62,9 +54,6 @@ public class HomeActivity extends AppCompatActivity
             startActivity(new Intent(getApplicationContext(), LoginActivity.class));
         }
         FirebaseUser loggedUser = firebaseAuth.getCurrentUser();
-        Toast.makeText(this, lblUserEmail.getText().toString(), Toast.LENGTH_SHORT).show();
-
-
         /* END INITIALIZE */
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -85,8 +74,17 @@ public class HomeActivity extends AppCompatActivity
         drawer.setDrawerListener(toggle);
         toggle.syncState();
 
+        /* BEGIN OF NAVIGATION VIEW */
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+
+        View viewNavHeaderHome = navigationView.getHeaderView(0);
+        lblUserFullname = (TextView) viewNavHeaderHome.findViewById(R.id.lblUserFullname);
+        lblUserEmail    = (TextView) viewNavHeaderHome.findViewById(R.id.lblUserEmail);
+
+        lblUserEmail.setText(loggedUser.getEmail());
+        /* END OF NAVIGATION VIEW */
+
 
         /* CALL `ViewPagerAdapter` */
         ViewPagerAdapter viewPagerAdapter = new ViewPagerAdapter(getSupportFragmentManager());
@@ -95,8 +93,6 @@ public class HomeActivity extends AppCompatActivity
         viewPagerAdapter.addFragment(new ChatInstructorFragment(),"Instructor");
         /* END CALL */
 
-
-        lblUserEmail.setText("TRALLALALA");
         /* COMBINE */
         viewPager.setAdapter(viewPagerAdapter);
         tabLayout.setupWithViewPager(viewPager);

@@ -44,14 +44,6 @@
         android:singleLine="true"
         android:selectAllOnFocus="true" />
 
-    <com.facebook.login.widget.LoginButton
-        android:id="@+id/btnFacebook"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:layout_marginTop="30dp"
-        android:layout_marginBottom="30dp" />
-
     <TextView
         android:text="OR"
         android:layout_width="match_parent"
@@ -76,4 +68,13 @@
         android:singleLine="true"
         android:selectAllOnFocus="true"
         android:fontFamily="sans-serif" />
+
+    <com.facebook.login.widget.LoginButton
+        android:id="@+id/btnFacebook"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginBottom="37dp"
+        android:layout_above="@+id/lblOr"
+        android:layout_centerHorizontal="true" />
 </RelativeLayout>

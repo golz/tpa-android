@@ -19,6 +19,7 @@ import android.view.MenuItem;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.facebook.login.LoginManager;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.michelle.goldwin.tpamobile.R;
@@ -145,6 +146,7 @@ public class HomeActivity extends AppCompatActivity
 
         } else if (id == R.id.nav_logout) {
             firebaseAuth.signOut();
+            LoginManager.getInstance().logOut();
             finish();
             startActivity(new Intent(getApplicationContext(),LoginActivity.class));
         }

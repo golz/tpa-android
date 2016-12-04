@@ -136,7 +136,10 @@ public class HomeActivity extends AppCompatActivity
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
-        if (id == R.id.nav_insert_food) {
+        if(id == R.id.nav_update_profile){
+            startActivity(new Intent(getApplicationContext(),ProfileActivity.class));
+        }
+        else if (id == R.id.nav_insert_food) {
             // Handle the camera action
         } else if (id == R.id.nav_calorie_history) {
 

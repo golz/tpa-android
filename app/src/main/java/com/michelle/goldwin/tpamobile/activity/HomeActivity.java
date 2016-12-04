@@ -145,8 +145,8 @@ public class HomeActivity extends AppCompatActivity
         } else if (id == R.id.nav_calorie_history) {
 
         } else if (id == R.id.nav_logout) {
-            firebaseAuth.signOut();
-            LoginManager.getInstance().logOut();
+            firebaseAuth.signOut();                 // Firebase Logout
+            LoginManager.getInstance().logOut();    // Facebook Logout
             finish();
             startActivity(new Intent(getApplicationContext(),LoginActivity.class));
         }

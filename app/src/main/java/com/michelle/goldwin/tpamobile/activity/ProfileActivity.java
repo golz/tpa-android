@@ -1,5 +1,7 @@
 package com.michelle.goldwin.tpamobile.activity;
 
+import android.app.DatePickerDialog;
+import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.net.Uri;
@@ -8,6 +10,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
@@ -31,6 +34,7 @@ import com.squareup.picasso.Picasso;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 
@@ -55,6 +59,15 @@ public class ProfileActivity extends AppCompatActivity {
     private Uri uploadUri;
     private String taskSnapshotDownloadUrl;
 
+    /**
+     * This Varialbe is used for calendar
+     */
+    private Calendar calendar;
+    private int year_x;
+    private int month_x;
+    private int day_x;
+    static final int CALENDAR_DIALOG_ID = 0;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -64,12 +77,17 @@ public class ProfileActivity extends AppCompatActivity {
         imgProfile  = (ImageView) findViewById(R.id.imgProfile);
         txtFullname = (EditText) findViewById(R.id.txtFullname);
         txtDOB      = (EditText) findViewById(R.id.txtDOB);
+        txtDOB.setKeyListener(null);
         txtHeight   = (EditText) findViewById(R.id.txtHeight);
         txtWeight   = (EditText) findViewById(R.id.txtWeight);
         btnUpdate   = (Button) findViewById(R.id.btnUpdate);
         btnCancel   = (Button) findViewById(R.id.btnCancel);
         firebaseAuth     = FirebaseAuth.getInstance();
         storageReference = FirebaseStorage.getInstance().getReference();
+        calendar    = Calendar.getInstance();
+        year_x      = calendar.get(Calendar.YEAR);
+        month_x     = calendar.get(Calendar.MONTH);
+        day_x       = calendar.get(Calendar.DAY_OF_MONTH);
         /* END INITIALIZE */
 
         /* BEGIN READ OLD DATA WITH DATABASE REFERENCE */
@@ -84,14 +102,11 @@ public class ProfileActivity extends AppCompatActivity {
                 User user = dataSnapshot.getValue(User.class);
                 if(null != user)
                 {
-                    /**
-                     * TODO: Validate null value for attributes below and Validate URL
-                     */
                     if(user.profileurl != null) Picasso.with(getApplicationContext()).load(user.profileurl).into(imgProfile);
-                    txtFullname.setText(user.fullname.toString());
-                    txtDOB.setText(user.DOB.getDate()+"/"+user.DOB.getMonth()+"/"+user.DOB.getYear());
-                    txtHeight.setText(user.height.toString());
-                    txtWeight.setText(user.weight.toString());
+                    if(user.fullname != null)   txtFullname.setText(user.fullname.toString());
+                    if(user.DOB != null)        txtDOB.setText(user.DOB.toString());
+                    if(user.height != null)     txtHeight.setText(user.height.toString());
+                    if(user.weight != null)     txtWeight.setText(user.weight.toString());
                 }
                 else
                 {
@@ -118,7 +133,7 @@ public class ProfileActivity extends AppCompatActivity {
         txtDOB.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
+                showDialog(CALENDAR_DIALOG_ID);
             }
         });
         btnUpdate.setOnClickListener(new View.OnClickListener() {
@@ -130,16 +145,13 @@ public class ProfileActivity extends AppCompatActivity {
                 Double weight   = Double.parseDouble(txtWeight.getText().toString().trim());
 
                 User user = null;
-                try {
-                    user = new User(fullname, (Date)new SimpleDateFormat("d/M/y").parse(dob),height,weight,true,taskSnapshotDownloadUrl);
-                    databaseReference = FirebaseDatabase.getInstance().getReference();
-                    databaseReference.child("users").child(firebaseAuth.getCurrentUser().getUid().toString()).setValue(user);
 
-                    Toast.makeText(ProfileActivity.this, "Update success", Toast.LENGTH_SHORT).show();
-                    finish();
-                } catch (ParseException e) {
-                    Toast.makeText(ProfileActivity.this, e.getMessage().toString(), Toast.LENGTH_LONG).show();
-                }
+                user = new User(fullname, dob,height,weight,true,taskSnapshotDownloadUrl);
+                databaseReference = FirebaseDatabase.getInstance().getReference();
+                databaseReference.child("users").child(firebaseAuth.getCurrentUser().getUid().toString()).setValue(user);
+
+                Toast.makeText(ProfileActivity.this, "Update success", Toast.LENGTH_SHORT).show();
+                finish();
             }
         });
         btnCancel.setOnClickListener(new View.OnClickListener() {
@@ -151,6 +163,33 @@ public class ProfileActivity extends AppCompatActivity {
         /* END ACTION */
     }
 
+    /**
+     * For Show Dialog Date Picker
+     */
+    @Override
+    protected Dialog onCreateDialog(int id) {
+        if(id == CALENDAR_DIALOG_ID)
+        {
+            return new DatePickerDialog(this,datePickerListener,year_x,month_x,day_x);
+        }
+        return null;
+    }
+    private DatePickerDialog.OnDateSetListener datePickerListener = new DatePickerDialog.OnDateSetListener() {
+        @Override
+        public void onDateSet(DatePicker datePicker, int i, int i1, int i2) {
+            year_x = i;
+            month_x = i1 + 1;
+            day_x = i2;
+            txtDOB.setText(day_x+"/"+month_x+"/"+year_x);
+        }
+    };
+
+    /**
+     * For Upload Photo
+     * @param requestCode
+     * @param resultCode
+     * @param data
+     */
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -166,6 +205,8 @@ public class ProfileActivity extends AppCompatActivity {
             progressDialog.show();
             uploadUri = data.getData();
 
+            Picasso.with(getApplicationContext()).load(uploadUri).into(imgProfile);
+
             StorageReference  filePath = storageReference.child("ProfilePictures").child(uploadUri.getLastPathSegment());
             filePath.putFile(uploadUri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                 @Override
@@ -173,7 +214,6 @@ public class ProfileActivity extends AppCompatActivity {
                     progressDialog.dismiss();
                     Toast.makeText(ProfileActivity.this, "Upload success", Toast.LENGTH_SHORT).show();
                     taskSnapshotDownloadUrl = taskSnapshot.getDownloadUrl().toString();
-                    Picasso.with(getApplicationContext()).load(taskSnapshotDownloadUrl).into(imgProfile);
                 }
             }).addOnFailureListener(new OnFailureListener() {
                 @Override

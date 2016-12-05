@@ -126,7 +126,7 @@ public class HomeActivity extends AppCompatActivity
                 if(null != user)
                 {
                     if(user.profileurl != null) Picasso.with(getApplicationContext()).load(user.profileurl).resize(128,128).into(imgProfile);
-                    lblUserFullname.setText(user.fullname);
+                    if(user.fullname != null)   lblUserFullname.setText(user.fullname);
                 }
                 else
                 {

@@ -8,7 +8,7 @@ import java.util.Date;
 
 public class User {
     public String fullname;
-    public Date DOB;
+    public String DOB;
     public Double height;
     public Double weight;
     public Boolean updateStatus;
@@ -18,7 +18,7 @@ public class User {
 
     }
 
-    public User(String fullname,Date DOB, Double height, Double weight, Boolean updateStatus, String profileurl) {
+    public User(String fullname,String DOB, Double height, Double weight, Boolean updateStatus, String profileurl) {
         this.fullname = fullname;
         this.DOB = DOB;
         this.height = height;

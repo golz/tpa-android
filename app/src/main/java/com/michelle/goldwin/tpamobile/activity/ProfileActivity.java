@@ -4,7 +4,9 @@ import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.net.Uri;
+import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -32,6 +34,7 @@ import com.michelle.goldwin.tpamobile.R;
 import com.michelle.goldwin.tpamobile.object.User;
 import com.squareup.picasso.Picasso;
 
+import java.io.ByteArrayOutputStream;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -203,12 +206,28 @@ public class ProfileActivity extends AppCompatActivity {
             final ProgressDialog progressDialog = new ProgressDialog(this);
             progressDialog.setMessage("Uploading...");
             progressDialog.show();
-            uploadUri = data.getData();
 
+            //Get Url
+            uploadUri = data.getData();
+            //Initialize photo's preview without download from Firebase Storage
             Picasso.with(getApplicationContext()).load(uploadUri).into(imgProfile);
 
+            /* BEGIN OF DATA COMPRESSING WITH BITMAP */
+            Bitmap bitmap = null;
+            try {
+                bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), uploadUri);
+            }catch (Exception e)
+            {
+                Toast.makeText(this, e.getMessage().toString(), Toast.LENGTH_SHORT).show();
+            }
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            bitmap.compress(Bitmap.CompressFormat.JPEG,30,baos); //Compress to 30% from Original
+            byte[] newData = baos.toByteArray();
+            /* END OF DATA COMPRESSING WITH BITMAP */
+
             StorageReference  filePath = storageReference.child("ProfilePictures").child(uploadUri.getLastPathSegment());
-            filePath.putFile(uploadUri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+           // filePath.putFile(uploadUri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+            filePath.putBytes(newData).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                 @Override
                 public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
                     progressDialog.dismiss();

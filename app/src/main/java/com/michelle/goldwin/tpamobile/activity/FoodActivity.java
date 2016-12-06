@@ -27,7 +27,7 @@ public class FoodActivity extends AppCompatActivity {
     private EditText txtFoodCalorie;
     private Button   btnAddFood;
 
-    private FoodListAdapter foodListAdapter = new FoodListAdapter(getApplicationContext());
+    private FoodListAdapter foodListAdapter;
 
     private DatabaseReference databaseReference;
 
@@ -36,7 +36,8 @@ public class FoodActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_food);
 
-        ListView foodListView = (ListView) findViewById(R.id.listViewFood);
+        final ListView foodListView = (ListView) findViewById(R.id.listViewFood);
+        foodListAdapter = new FoodListAdapter(getApplicationContext());
         foodListView.setAdapter(foodListAdapter);
 
         foodListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -58,12 +59,16 @@ public class FoodActivity extends AppCompatActivity {
         final ProgressDialog progressDialog = new ProgressDialog(this);
         progressDialog.setMessage("Please wait...");
         progressDialog.show();
+
         databaseReference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                /**
-                 * TODO: Retrieve all data from firebase (Foods) then validate Adapter will refresh after retrieve
-                 */
+                for(DataSnapshot foodSnapshot : dataSnapshot.getChildren())
+                {
+                    String foodname = (String) foodSnapshot.child("foodname").getValue();
+                    Double calorie = Double.parseDouble(foodSnapshot.child("calorie").getValue().toString());
+                    foodListAdapter.addFood(new Food(foodname,calorie));
+                }
                 progressDialog.dismiss();
             }
             @Override
@@ -83,6 +88,11 @@ public class FoodActivity extends AppCompatActivity {
                 Food food = new Food(foodName,foodCalorie);
                 databaseReference = FirebaseDatabase.getInstance().getReference();
                 databaseReference.child("foods").child(foodName).setValue(food);
+
+                /**
+                 * TODO: After insert, triggering firebase to refresh list view, and name of food just can single line
+                 */
+                foodListView.invalidateViews();
 
                 Toast.makeText(FoodActivity.this, "Insert success", Toast.LENGTH_SHORT).show();
             }

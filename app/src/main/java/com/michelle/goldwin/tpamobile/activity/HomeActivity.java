@@ -195,7 +195,7 @@ public class HomeActivity extends AppCompatActivity
             startActivity(new Intent(getApplicationContext(),ProfileActivity.class));
         }
         else if (id == R.id.nav_insert_food) {
-
+            // Handle the camera action
         } else if (id == R.id.nav_calorie_history) {
 
         } else if (id == R.id.nav_logout) {

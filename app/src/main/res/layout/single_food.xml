@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<TableLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <TableRow
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical">
+
+        <TextView
+            android:id="@+id/lblFoodName"
+            android:layout_width="wrap_content"
+            android:layout_height="50dp"
+            tools:text="Food Name"
+            android:textAlignment="center"
+            android:gravity="center_vertical"
+            android:paddingLeft="25dp"
+            android:textColor="@color/colorPrimary" />
+        <TextView
+            android:id="@+id/lblFoodCalorie"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            tools:text="Calorie"
+            android:gravity="center_vertical"
+            android:paddingLeft="200dp"
+            android:textStyle="normal|italic"
+            android:textColor="@color/colorPrimary" />
+    </TableRow>
+</TableLayout>

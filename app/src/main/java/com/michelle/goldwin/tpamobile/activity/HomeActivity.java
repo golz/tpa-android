@@ -1,5 +1,6 @@
 package com.michelle.goldwin.tpamobile.activity;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -16,17 +17,25 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.facebook.login.LoginManager;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.michelle.goldwin.tpamobile.R;
 import com.michelle.goldwin.tpamobile.chatinstructor.ChatInstructorFragment;
 import com.michelle.goldwin.tpamobile.googlemaps.GoogleMapsFragment;
+import com.michelle.goldwin.tpamobile.object.User;
 import com.michelle.goldwin.tpamobile.todolist.TodoListFragment;
 import com.michelle.goldwin.tpamobile.viewpager.ViewPagerAdapter;
+import com.squareup.picasso.Picasso;
 
 public class HomeActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -34,11 +43,14 @@ public class HomeActivity extends AppCompatActivity
     private TabLayout tabLayout;
     private ViewPager viewPager;
 
+    private ImageView imgProfile;
     private TextView lblUserFullname;
     private TextView lblUserEmail;
 
     private FirebaseAuth firebaseAuth;
+    private DatabaseReference databaseReference;
 
+    ProgressDialog progressDialog;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -55,6 +67,22 @@ public class HomeActivity extends AppCompatActivity
             startActivity(new Intent(getApplicationContext(), LoginActivity.class));
         }
         FirebaseUser loggedUser = firebaseAuth.getCurrentUser();
+        progressDialog =  new ProgressDialog(this);
+
+        /* BEGIN READ OLD DATA WITH DATABASE REFERENCE */
+        databaseReference = FirebaseDatabase.getInstance().getReference("users/"+firebaseAuth.getCurrentUser().getUid().toString()+"");
+        databaseReference.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                User user = dataSnapshot.getValue(User.class);
+                if(user == null)
+                    startActivity(new Intent(getApplicationContext(),ProfileActivity.class));
+            }
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+            }
+        });
+        /* BEGIN READ OLD DATA WITH DATABASE REFERENCE */
         /* END INITIALIZE */
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -80,12 +108,38 @@ public class HomeActivity extends AppCompatActivity
         navigationView.setNavigationItemSelectedListener(this);
 
         View viewNavHeaderHome = navigationView.getHeaderView(0);
+
+        imgProfile      = (ImageView) viewNavHeaderHome.findViewById(R.id.imgProfile);
         lblUserFullname = (TextView) viewNavHeaderHome.findViewById(R.id.lblUserFullname);
         lblUserEmail    = (TextView) viewNavHeaderHome.findViewById(R.id.lblUserEmail);
 
+        /**
+         * Check database for (New) Profile Image, Fullname and Email Address
+         */
+        databaseReference = FirebaseDatabase.getInstance().getReference("users/"+firebaseAuth.getCurrentUser().getUid().toString()+"");
+        progressDialog.setMessage("Please wait...");
+        progressDialog.show();
+        databaseReference.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                User user = dataSnapshot.getValue(User.class);
+                if(null != user)
+                {
+                    if(user.profileurl != null) Picasso.with(getApplicationContext()).load(user.profileurl).resize(128,128).into(imgProfile);
+                    if(user.fullname != null)   lblUserFullname.setText(user.fullname);
+                }
+                else
+                {
+                    lblUserFullname.setText(firebaseAuth.getCurrentUser().getEmail().split("@")[0].toString());
+                }
+                progressDialog.dismiss();
+            }
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+            }
+        });
         lblUserEmail.setText(loggedUser.getEmail());
         /* END OF NAVIGATION VIEW */
-
 
         /* CALL `ViewPagerAdapter` */
         ViewPagerAdapter viewPagerAdapter = new ViewPagerAdapter(getSupportFragmentManager());

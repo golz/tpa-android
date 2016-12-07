@@ -112,11 +112,10 @@ public class RegisterActivity extends AppCompatActivity {
                 firebaseAuth.signInWithCredential(credential).addOnCompleteListener(RegisterActivity.this, new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
-
+                        finish();
+                        startActivity(new Intent(getApplicationContext(),HomeActivity.class));
                     }
                 });
-                finish();
-                startActivity(new Intent(getApplicationContext(),HomeActivity.class));
             }
             @Override
             public void onCancel() {

@@ -1,6 +1,7 @@
 package com.michelle.goldwin.tpamobile.chatinstructor;
 
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -11,6 +12,7 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 import com.michelle.goldwin.tpamobile.R;
+import com.michelle.goldwin.tpamobile.activity.ChatRoomActivity;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -34,7 +36,7 @@ public class ChatInstructorFragment extends Fragment {
         instructorListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                Toast.makeText(getContext(), "test", Toast.LENGTH_SHORT).show();
+                startActivity(new Intent(getContext(),ChatRoomActivity.class));
             }
         });
         return view;

@@ -1,5 +1,6 @@
 package com.michelle.goldwin.tpamobile.activity;
 
+import android.app.ProgressDialog;
 import android.icu.text.DateFormat;
 import android.net.Uri;
 import android.os.Bundle;
@@ -11,17 +12,22 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.firebase.ui.database.FirebaseListAdapter;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.Exclude;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.StorageReference;
 import com.michelle.goldwin.tpamobile.R;
 import com.michelle.goldwin.tpamobile.chatinstructor.ChatMessage;
 import com.michelle.goldwin.tpamobile.chatinstructor.InstructorListAdapter;
+import com.michelle.goldwin.tpamobile.object.User;
 
 import org.w3c.dom.Text;
 
@@ -31,7 +37,8 @@ import java.util.Map;
 public class ChatRoomActivity extends AppCompatActivity {
 
     private FirebaseListAdapter<ChatMessage> adapter;
-
+    String userfullname;
+    DatabaseReference databaseReference;
     public void displayChat() {
 
         ListView listMsg = (ListView) findViewById(R.id.msgList);
@@ -67,10 +74,27 @@ public class ChatRoomActivity extends AppCompatActivity {
             public void onClick(View view) {
                 EditText inp = (EditText) findViewById(R.id.input);
 
-                ChatMessage chat = new ChatMessage(inp.getText().toString(),FirebaseAuth.getInstance().getCurrentUser().getDisplayName(),FirebaseAuth.getInstance().getCurrentUser().getUid());
-                FirebaseDatabase.getInstance().getReference().child("Chat").push().setValue(chat);
+                if(!inp.getText().equals("")) {
 
+                    databaseReference = FirebaseDatabase.getInstance().getReference("users/"+FirebaseAuth.getInstance().getCurrentUser().getUid().toString());
 
+                    databaseReference.addValueEventListener(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(DataSnapshot dataSnapshot) {
+                            User user = dataSnapshot.getValue(User.class);
+                            userfullname = user.fullname;
+
+                        }
+
+                        @Override
+                        public void onCancelled(DatabaseError databaseError) {
+
+                        }
+                    });
+
+                    ChatMessage chat = new ChatMessage(inp.getText().toString(), userfullname.toString(), FirebaseAuth.getInstance().getCurrentUser().getUid());
+                    FirebaseDatabase.getInstance().getReference().child("Chat").push().setValue(chat);
+                }
 
                 inp.setText("");
                 displayChat();

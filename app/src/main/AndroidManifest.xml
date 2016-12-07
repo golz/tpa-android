@@ -35,6 +35,9 @@
         <activity android:name=".activity.ProfileActivity"
             android:label="My Profile"></activity>
 
+        <activity android:name=".activity.FoodActivity"></activity>
+        <activity android:name=".activity.ChatRoomActivity"
+            android:theme="@style/AppTheme.NoActionBar"></activity>
         <meta-data android:name="com.facebook.sdk.ApplicationId"
             android:value="@string/facebook_app_id"/>
     </application>

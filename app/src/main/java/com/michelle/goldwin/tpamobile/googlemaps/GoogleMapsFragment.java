@@ -2,9 +2,12 @@ package com.michelle.goldwin.tpamobile.googlemaps;
 
 
 import android.Manifest;
+import android.app.ProgressDialog;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.location.Location;
 import android.location.LocationManager;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -37,30 +40,49 @@ import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.Polyline;
+import com.google.android.gms.maps.model.PolylineOptions;
 import com.michelle.goldwin.tpamobile.R;
+
+import org.json.JSONArray;
+import org.json.JSONObject;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
 
 /**
  * A simple {@link Fragment} subclass.
  */
 public class GoogleMapsFragment extends Fragment implements LocationListener,GoogleApiClient.ConnectionCallbacks,GoogleApiClient.OnConnectionFailedListener{
 
+    /* Define Final */
     private final int PROXIMITY_RADIUS = 10000;
     public static final int MY_PERMISSIONS_REQUEST_LOCATION = 99;
 
     private Button btnGym;
 
+    /* Map and API Cleint*/
     private MapView mapView;
     private GoogleMap googleMap;
     private GoogleApiClient googleApiClient;
 
+    /* Coordinates */
     private double latitude;
     private double longitude;
 
+    /* Location Variable*/
     private Location lastLocation;
     private Marker currentLocationMarker;
     private LocationRequest locationRequest;
 
+    /* Target Points */
     private String searchWhat = "gym";
+
+    /* PolyLine */
+    private ArrayList<LatLng> arrayPoints = null;
+    private PolylineOptions polylineOptions;
+    private Polyline line;
 
     public GoogleMapsFragment() {}
 
@@ -103,6 +125,7 @@ public class GoogleMapsFragment extends Fragment implements LocationListener,Goo
 
         /* BEGIN INITIALIZE */
         btnGym = (Button) rootView.findViewById(R.id.btnGym);
+        arrayPoints = new ArrayList<>();
         /* END INITIALIZE */
 
         /* BEGIN GOOGLE MAPS */
@@ -135,12 +158,29 @@ public class GoogleMapsFragment extends Fragment implements LocationListener,Goo
                         googleMapGetPlace(searchWhat);
                     }
                 });
+                googleMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
+                    @Override
+                    public boolean onMarkerClick(Marker marker) {
+                        googleGetDirection(new LatLng(lastLocation.getLatitude(),lastLocation.getLongitude()),marker.getPosition());
+                        marker.showInfoWindow();
+                        return true;
+                    }
+                });
+
+                googleMap.setOnMapLongClickListener(new GoogleMap.OnMapLongClickListener() {
+                    @Override
+                    public void onMapLongClick(LatLng latLng) {
+                        googleMap.clear();
+                        arrayPoints.clear();
+                    }
+                });
                 /* END ACTION */
             }
         });
         /* END GOOGLE MAPS */
         return rootView;
     }
+    /* BEGIN GOOGLE MAPS NEARBY PLACE */
     private void googleMapGetPlace(String place)
     {
         googleMap.clear();
@@ -161,6 +201,142 @@ public class GoogleMapsFragment extends Fragment implements LocationListener,Goo
         googlePlacesUrl.append("&key=" + "AIzaSyBVDZt8YsMPqOTRP5PgIVMtnoS2R9L5pWY");
         return googlePlacesUrl.toString();
     }
+    /* END GOOGLE MAPS NEARBY PLACE */
+
+
+
+    /*
+    * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+    * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * l o l * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+    * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+    */
+
+
+    /* BEGIN GOOGLE MAPS POLYLINE */
+    private LatLng startLatLng;
+    private LatLng endLatLng;
+    private void googleGetDirection(LatLng origin, LatLng destination)
+    {
+        String url = getPoly(origin,destination);
+        Object[] DataTransfer = new Object[2];
+        DataTransfer[0] = googleMap;
+        DataTransfer[1] = url;
+        GetPolylinePlacesData  getPolylinePlacesData = new GetPolylinePlacesData();
+        getPolylinePlacesData.execute(DataTransfer);
+
+        startLatLng = origin;
+        endLatLng   = destination;
+    }
+    private String getPoly(LatLng origin,LatLng destination)
+    {
+        StringBuilder googlePlacesUrl = new StringBuilder("http://maps.googleapis.com/maps/api/directions/json?");
+        googlePlacesUrl.append("origin=" + origin.latitude + "," + origin.longitude);
+        googlePlacesUrl.append("&destination=" + destination.latitude + "," + origin.longitude);
+        googlePlacesUrl.append("&sensor=false&mode=driving&alternatives=true");
+        return googlePlacesUrl.toString();
+    }
+    private class GetPolylinePlacesData extends AsyncTask<Object, String, String> {
+        private ProgressDialog progressDialog;
+        private String googlePlacesData;
+        private GoogleMap googleMap;
+        private String url;
+
+        GetPolylinePlacesData() {
+        }
+
+        @Override
+        protected String doInBackground(Object... objects) {
+            try {
+            /* BEGIN INITIALIZE */
+                //Log.d("GetNearbyPlacesData","doInBackground Entered");
+                googleMap   = (GoogleMap) objects[0];
+                url         = (String) objects[1];
+                DownloadUrl downloadUrl = new DownloadUrl();
+                googlePlacesData = downloadUrl.readUrl(url);
+            /* END INITIALIZE */
+            }catch (Exception e){
+
+            }
+            return googlePlacesData;
+        }
+
+        @Override
+        protected void onPreExecute() {
+            // TODO Auto-generated method stub
+            super.onPreExecute();
+            progressDialog = new ProgressDialog(getContext());
+            progressDialog.setMessage("Fetching routes...");
+            progressDialog.setIndeterminate(true);
+            progressDialog.show();
+        }
+
+        @Override
+        protected void onPostExecute(String result) {
+            super.onPostExecute(result);
+            progressDialog.hide();
+            if (result != null) {
+                drawPath(result);
+            }
+        }
+        public void drawPath(String result) {
+            if (line != null) {
+                googleMap.clear();
+                googleMapGetPlace(searchWhat);
+            }
+            googleMap.addMarker(new MarkerOptions().position(startLatLng).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE)));
+            googleMap.addMarker(new MarkerOptions().position(endLatLng).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED)));
+            try {
+                final JSONObject json = new JSONObject(result);
+                JSONArray routeArray = json.getJSONArray("routes");
+                JSONObject routes = routeArray.getJSONObject(0);
+                JSONObject overviewPolylines = routes.getJSONObject("overview_polyline");
+                String encodedString = overviewPolylines.getString("points");
+                List<LatLng> list = decodePoly(encodedString);
+                //Repeater
+                PolylineOptions options = new PolylineOptions().width(5).color(Color.BLUE);
+                for (int z = 0; z < list.size(); z++) {
+                    LatLng point = list.get(z);
+                    options.add(point);
+                }
+                line = googleMap.addPolyline(options);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        private List<LatLng> decodePoly(String encoded) {
+            List<LatLng> poly = new ArrayList<LatLng>();
+            int index = 0, len = encoded.length();
+            int lat = 0, lng = 0;
+
+            while (index < len) {
+                int b, shift = 0, result = 0;
+                do {
+                    b = encoded.charAt(index++) - 63;
+                    result |= (b & 0x1f) << shift;
+                    shift += 5;
+                } while (b >= 0x20);
+                int dlat = ((result & 1) != 0 ? ~(result >> 1) : (result >> 1));
+                lat += dlat;
+
+                shift = 0;
+                result = 0;
+                do {
+                    b = encoded.charAt(index++) - 63;
+                    result |= (b & 0x1f) << shift;
+                    shift += 5;
+                } while (b >= 0x20);
+                int dlng = ((result & 1) != 0 ? ~(result >> 1) : (result >> 1));
+                lng += dlng;
+
+                LatLng p = new LatLng((((double) lat / 1E5)),
+                        (((double) lng / 1E5)));
+                poly.add(p);
+            }
+
+            return poly;
+        }
+    }
+    /* END GOOGLE MAPS POLYLINE */
 
     /* IGNORE ALL METHODS THAT PROVIDED BELOW */
     @Override
@@ -182,7 +358,7 @@ public class GoogleMapsFragment extends Fragment implements LocationListener,Goo
         currentLocationMarker = googleMap.addMarker(markerOptions);
 
         googleMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
-        googleMap.animateCamera(CameraUpdateFactory.zoomTo(10));
+        googleMap.animateCamera(CameraUpdateFactory.zoomTo(15));
 
         if(googleApiClient != null){
             LocationServices.FusedLocationApi.removeLocationUpdates(googleApiClient,this);

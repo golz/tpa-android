@@ -58,6 +58,7 @@ public class GetNearbyPlacesData extends AsyncTask<Object, String, String>{
             LatLng latLng   = new LatLng(lat, lng);
             markerOptions.position(latLng);
             markerOptions.title(placeName + " : " + vicinity);
+
             googleMap.addMarker(markerOptions);
             markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED));
             googleMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));

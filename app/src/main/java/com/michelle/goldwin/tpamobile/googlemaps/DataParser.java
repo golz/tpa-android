@@ -32,6 +32,7 @@ public class DataParser {
         return getPlaces(jsonArray);
     }
 
+    /* Place */
     private List<HashMap<String,String>> getPlaces(JSONArray jsonArray){
         int placesCount = jsonArray.length();
         List<HashMap<String,String>> listPlaces = new ArrayList<>();
@@ -48,7 +49,6 @@ public class DataParser {
         }
         return listPlaces;
     }
-
     private HashMap<String, String> getPlace(JSONObject googlePlaceJson) {
         HashMap<String, String> googlePlaceMap = new HashMap<String, String>();
         String placeName = "-NA-";
@@ -78,4 +78,6 @@ public class DataParser {
         }
         return googlePlaceMap;
     }
+
+    /* Poly */
 }

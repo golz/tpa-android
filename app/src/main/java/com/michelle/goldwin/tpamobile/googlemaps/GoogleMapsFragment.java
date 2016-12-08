@@ -5,6 +5,7 @@ import android.Manifest;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -43,6 +44,9 @@ import com.michelle.goldwin.tpamobile.R;
  */
 public class GoogleMapsFragment extends Fragment implements LocationListener,GoogleApiClient.ConnectionCallbacks,GoogleApiClient.OnConnectionFailedListener{
 
+    private final int PROXIMITY_RADIUS = 10000;
+    public static final int MY_PERMISSIONS_REQUEST_LOCATION = 99;
+
     private Button btnGym;
 
     private MapView mapView;
@@ -51,10 +55,12 @@ public class GoogleMapsFragment extends Fragment implements LocationListener,Goo
 
     private double latitude;
     private double longitude;
-    private final int PROXIMITY_RADIUS = 10000;
+
     private Location lastLocation;
     private Marker currentLocationMarker;
     private LocationRequest locationRequest;
+
+    private String searchWhat = "gym";
 
     public GoogleMapsFragment() {}
 
@@ -86,6 +92,9 @@ public class GoogleMapsFragment extends Fragment implements LocationListener,Goo
         View rootView = inflater.inflate(R.layout.fragment_google_maps, container, false);
 
         /* BEGIN CHECKING */
+        if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
+            checkLocationPermission();
+
         if(!CheckGooglePlayServices())
             Toast.makeText(getContext(), "No Google Services", Toast.LENGTH_SHORT).show();
         else
@@ -110,7 +119,7 @@ public class GoogleMapsFragment extends Fragment implements LocationListener,Goo
             @Override
             public void onMapReady(GoogleMap gMap) {
                 googleMap = gMap;
-                googleMap.setMapType(GoogleMap.MAP_TYPE_HYBRID);
+                googleMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
 
                 /* Check LOCATION_ACCESS from user's phone is allowed */
                 if (ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
@@ -123,7 +132,7 @@ public class GoogleMapsFragment extends Fragment implements LocationListener,Goo
                 btnGym.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        googleMapGetPlace("university");
+                        googleMapGetPlace(searchWhat);
                     }
                 });
                 /* END ACTION */
@@ -141,26 +150,19 @@ public class GoogleMapsFragment extends Fragment implements LocationListener,Goo
         DataTransfer[1] = url;
         GetNearbyPlacesData getNearbyPlaceData = new GetNearbyPlacesData();
         getNearbyPlaceData.execute(DataTransfer);
-        Toast.makeText(getContext(), "Success get nearby " + place + " within : " + latitude + "," + longitude, Toast.LENGTH_LONG).show();
     }
     private String getUrl(double latitude,double longitude,String place)
     {
         StringBuilder googlePlacesUrl = new StringBuilder("https://maps.googleapis.com/maps/api/place/nearbysearch/json?");
-        googlePlacesUrl.append("location=" +latitude + "," + longitude);
+        googlePlacesUrl.append("location=" + (double)latitude + "," + (double)longitude);
         googlePlacesUrl.append("&radius=" + PROXIMITY_RADIUS);
         googlePlacesUrl.append("&type=" + place);
         googlePlacesUrl.append("&sensor=true");
         googlePlacesUrl.append("&key=" + "AIzaSyBVDZt8YsMPqOTRP5PgIVMtnoS2R9L5pWY");
-        Toast.makeText(getContext(), googlePlacesUrl.toString(), Toast.LENGTH_SHORT).show();
         return googlePlacesUrl.toString();
     }
 
-    /* IGNORE ALL METHODS THAN PROVIDED BELOW */
-
-    /**
-     * Animate the camera when location is changed
-     * @param location
-     */
+    /* IGNORE ALL METHODS THAT PROVIDED BELOW */
     @Override
     public void onLocationChanged(Location location) {
         //Remove Old Marker
@@ -170,24 +172,68 @@ public class GoogleMapsFragment extends Fragment implements LocationListener,Goo
             currentLocationMarker.remove();
 
         /* IF LOCATION IN CHANGED, DONT FORGET TO SET LATITUDE AND LONGITUDE COORDINATES*/
-        latitude    = location.getLatitude();
-        longitude   = location.getLatitude();
+        latitude    = (double)location.getLatitude();
+        longitude   = (double)location.getLongitude();
         LatLng latLng = new LatLng(location.getLatitude(),location.getLongitude());
         MarkerOptions markerOptions = new MarkerOptions();
         markerOptions.position(latLng);
         markerOptions.title("Current Position");
-        markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_MAGENTA));
+        markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE));
         currentLocationMarker = googleMap.addMarker(markerOptions);
 
-        CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(latLng,20);
-        googleMap.animateCamera(cameraUpdate);
+        googleMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
+        googleMap.animateCamera(CameraUpdateFactory.zoomTo(10));
 
         if(googleApiClient != null){
             LocationServices.FusedLocationApi.removeLocationUpdates(googleApiClient,this);
-            Toast.makeText(getContext(), "Location Changed", Toast.LENGTH_SHORT).show();
+            //Toast.makeText(getContext(), "Location Changed", Toast.LENGTH_SHORT).show();
         }
     }
 
+    public boolean checkLocationPermission(){
+        if (ContextCompat.checkSelfPermission(getContext(),
+                Manifest.permission.ACCESS_FINE_LOCATION)
+                != PackageManager.PERMISSION_GRANTED) {
+
+            if (ActivityCompat.shouldShowRequestPermissionRationale(getActivity(),
+                    Manifest.permission.ACCESS_FINE_LOCATION)) {
+                ActivityCompat.requestPermissions(getActivity(),
+                        new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
+                        MY_PERMISSIONS_REQUEST_LOCATION);
+            } else {
+                ActivityCompat.requestPermissions(getActivity(),
+                        new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
+                        MY_PERMISSIONS_REQUEST_LOCATION);
+            }
+            return false;
+        } else {
+            return true;
+        }
+    }
+    @Override
+    public void onRequestPermissionsResult(int requestCode,
+                                           String permissions[], int[] grantResults) {
+        switch (requestCode) {
+            case MY_PERMISSIONS_REQUEST_LOCATION: {
+                if (grantResults.length > 0
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    if (ContextCompat.checkSelfPermission(getContext(),
+                            Manifest.permission.ACCESS_FINE_LOCATION)
+                            == PackageManager.PERMISSION_GRANTED) {
+
+                        if (googleApiClient == null) {
+                            buildGoogleApiClient();
+                        }
+                        googleMap.setMyLocationEnabled(true);
+                    }
+
+                } else {
+                    Toast.makeText(getContext(), "Permission denied", Toast.LENGTH_LONG).show();
+                }
+                return;
+            }
+        }
+    }
     @Override
     public void onConnected(@Nullable Bundle bundle) {
         locationRequest = new LocationRequest();
@@ -201,7 +247,6 @@ public class GoogleMapsFragment extends Fragment implements LocationListener,Goo
         }
        //Toast.makeText(getContext(), "Connected", Toast.LENGTH_SHORT).show();
     }
-
     @Override
     public void onConnectionSuspended(int i) {}
     @Override

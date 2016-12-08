@@ -7,7 +7,6 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -19,7 +18,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.facebook.login.LoginManager;
 import com.google.firebase.auth.FirebaseAuth;
@@ -30,7 +28,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.michelle.goldwin.tpamobile.R;
-import com.michelle.goldwin.tpamobile.chatinstructor.ChatInstructorFragment;
+import com.michelle.goldwin.tpamobile.chatinstructor.ChatFragment;
 import com.michelle.goldwin.tpamobile.global.LoggedUserInformation;
 import com.michelle.goldwin.tpamobile.googlemaps.GoogleMapsFragment;
 import com.michelle.goldwin.tpamobile.object.User;
@@ -153,7 +151,7 @@ public class HomeActivity extends AppCompatActivity
         ViewPagerAdapter viewPagerAdapter = new ViewPagerAdapter(getSupportFragmentManager());
         viewPagerAdapter.addFragment(new TodoListFragment(),"Missions");
         viewPagerAdapter.addFragment(new GoogleMapsFragment(),"Gym Location");
-        viewPagerAdapter.addFragment(new ChatInstructorFragment(),"Instructor");
+        viewPagerAdapter.addFragment(new ChatFragment(),"Instructor");
         /* END CALL */
 
         /* COMBINE */

@@ -64,6 +64,7 @@
             android:name=".activity.ChatRoomActivity"
             android:theme="@style/AppTheme.NoActionBar"
             android:label="Chat"
+
             />
 
         <!--Facebook API Key-->
@@ -78,6 +79,21 @@
         <meta-data
             android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version"/>
+
+        <!-- Chat -->
+        <service
+            android:name=".chatinstructor.ChatInstanceIIDService">
+            <intent-filter>
+                <action android:name="com.google.firebase.INSTANCE_ID_EVENT"/>
+            </intent-filter>
+        </service>
+
+        <service
+            android:name=".chatinstructor.ChatPushNotification">
+            <intent-filter>
+                <action android:name="com.google.firebase.MESSAGING_EVENT"/>
+            </intent-filter>
+        </service>
 
     </application>
 

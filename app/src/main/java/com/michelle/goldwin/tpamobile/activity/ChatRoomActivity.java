@@ -9,11 +9,13 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.firebase.ui.database.FirebaseListAdapter;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.messaging.FirebaseMessagingService;
 import com.michelle.goldwin.tpamobile.R;
 import com.michelle.goldwin.tpamobile.object.ChatMessage;
 import com.michelle.goldwin.tpamobile.global.LoggedUserInformation;
@@ -29,11 +31,13 @@ public class ChatRoomActivity extends AppCompatActivity {
 
     private DatabaseReference databaseReference;
 
+    private Bundle extra;
+
     public void displayChat() {
 
         ListView listMsg = (ListView) findViewById(R.id.msgList);
 
-        adapter = new FirebaseListAdapter<ChatMessage>(this, ChatMessage.class, R.layout.message, FirebaseDatabase.getInstance().getReference().child("chats")) {
+        adapter = new FirebaseListAdapter<ChatMessage>(this, ChatMessage.class, R.layout.message, FirebaseDatabase.getInstance().getReference().child("users/"+extra.getString("key")+"/chats")) {
             @Override
             protected void populateView(View v, ChatMessage model, int position) {
 
@@ -41,41 +45,54 @@ public class ChatRoomActivity extends AppCompatActivity {
                 TextView msgUser = (TextView) v.findViewById(R.id.msgUser);
                 TextView msgTime = (TextView) v.findViewById(R.id.msgTime);
 
-                msgTxt.setText(model.getMessage());
-                msgUser.setText(model.getUser());
-                msgTime.setText(android.text.format.DateFormat.format("dd-MM-yyyy (HH:mm:ss)",model.getTime()));
+                if (model.getUser().equals(LoggedUserInformation.getInstance().getFullname()) || model.getUser().equals(extra.getString("name"))) {
+                    {
+                        msgTxt.setText(model.getMessage());
+                        msgUser.setText(model.getUser());
+                        msgTime.setText(android.text.format.DateFormat.format("dd-MM-yyyy (HH:mm:ss)", model.getTime()));
+                    }
+
+                };
             }
         };
-
-        listMsg.setAdapter(adapter);
-    }
+            listMsg.setAdapter(adapter);
+        }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chat_room);
 
+
+        /**
+         * TODO: Get Extra from intent
+         */
+
+        extra = getIntent().getExtras();
+
         /* BEGIN INTIIALIZE */
         displayChat();
         btnSend = (FloatingActionButton) findViewById(R.id.btnSend);
         inp    =  (EditText) findViewById(R.id.input);
-        databaseReference = FirebaseDatabase.getInstance().getReference("users");
+        databaseReference = FirebaseDatabase.getInstance().getReference("users/"+extra.getString("key")+"/chats");
         /* END INITIALIZE */
+
+
 
         /**
          * TODO: Change to name for Toolbar's title
          */
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        getSupportActionBar().setTitle("Nanti ini di set dengan nama orang");
+        getSupportActionBar().setTitle(extra.getString("name"));
 
         btnSend.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 if(!TextUtils.isEmpty(inp.getText())) {
 
-                    ChatMessage chat = new ChatMessage(inp.getText().toString(), LoggedUserInformation.getInstance().getFullname() , FirebaseAuth.getInstance().getCurrentUser().getUid());
-                    FirebaseDatabase.getInstance().getReference().child("chats").push().setValue(chat);
+                    ChatMessage chat = new ChatMessage(inp.getText().toString(), LoggedUserInformation.getInstance().getFullname() , extra.getString("key"));
+                    FirebaseDatabase.getInstance().getReference().child("users/"+extra.getString("key")+"/chats").push().setValue(chat);
                     inp.setText("");
                     displayChat();
                 }

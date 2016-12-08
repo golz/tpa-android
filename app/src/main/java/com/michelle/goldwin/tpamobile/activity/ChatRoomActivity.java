@@ -1,49 +1,39 @@
 package com.michelle.goldwin.tpamobile.activity;
 
-import android.app.ProgressDialog;
-import android.icu.text.DateFormat;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.firebase.ui.database.FirebaseListAdapter;
-import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.Exclude;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
-import com.google.firebase.storage.StorageReference;
 import com.michelle.goldwin.tpamobile.R;
-import com.michelle.goldwin.tpamobile.chatinstructor.ChatMessage;
-import com.michelle.goldwin.tpamobile.chatinstructor.InstructorListAdapter;
-import com.michelle.goldwin.tpamobile.object.User;
+import com.michelle.goldwin.tpamobile.object.ChatMessage;
+import com.michelle.goldwin.tpamobile.global.LoggedUserInformation;
 
-import org.w3c.dom.Text;
-
-import java.util.HashMap;
-import java.util.Map;
 
 public class ChatRoomActivity extends AppCompatActivity {
 
     private FirebaseListAdapter<ChatMessage> adapter;
-    String userfullname;
-    DatabaseReference databaseReference;
+
+    private Toolbar toolbar;
+    private FloatingActionButton btnSend;
+    private EditText inp;
+
+    private DatabaseReference databaseReference;
+
     public void displayChat() {
 
         ListView listMsg = (ListView) findViewById(R.id.msgList);
 
-        adapter = new FirebaseListAdapter<ChatMessage>(this, ChatMessage.class, R.layout.message, FirebaseDatabase.getInstance().getReference().child("Chat")) {
+        adapter = new FirebaseListAdapter<ChatMessage>(this, ChatMessage.class, R.layout.message, FirebaseDatabase.getInstance().getReference().child("chats")) {
             @Override
             protected void populateView(View v, ChatMessage model, int position) {
 
@@ -65,43 +55,32 @@ public class ChatRoomActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chat_room);
 
+        /* BEGIN INTIIALIZE */
         displayChat();
+        btnSend = (FloatingActionButton) findViewById(R.id.btnSend);
+        inp    =  (EditText) findViewById(R.id.input);
+        databaseReference = FirebaseDatabase.getInstance().getReference("users");
+        /* END INITIALIZE */
 
-        FloatingActionButton btnSend = (FloatingActionButton) findViewById(R.id.btnSend);
+        /**
+         * TODO: Change to name for Toolbar's title
+         */
+        toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setTitle("Nanti ini di set dengan nama orang");
 
         btnSend.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                EditText inp = (EditText) findViewById(R.id.input);
+                if(!TextUtils.isEmpty(inp.getText())) {
 
-                if(!inp.getText().equals("")) {
-
-                    databaseReference = FirebaseDatabase.getInstance().getReference("users/"+FirebaseAuth.getInstance().getCurrentUser().getUid().toString());
-
-                    databaseReference.addValueEventListener(new ValueEventListener() {
-                        @Override
-                        public void onDataChange(DataSnapshot dataSnapshot) {
-                            User user = dataSnapshot.getValue(User.class);
-                            userfullname = user.fullname;
-
-                        }
-
-                        @Override
-                        public void onCancelled(DatabaseError databaseError) {
-
-                        }
-                    });
-
-                    ChatMessage chat = new ChatMessage(inp.getText().toString(), userfullname.toString(), FirebaseAuth.getInstance().getCurrentUser().getUid());
-                    FirebaseDatabase.getInstance().getReference().child("Chat").push().setValue(chat);
+                    ChatMessage chat = new ChatMessage(inp.getText().toString(), LoggedUserInformation.getInstance().getFullname() , FirebaseAuth.getInstance().getCurrentUser().getUid());
+                    FirebaseDatabase.getInstance().getReference().child("chats").push().setValue(chat);
+                    inp.setText("");
+                    displayChat();
                 }
-
-                inp.setText("");
-                displayChat();
             }
         });
-
-
     }
 
     /**

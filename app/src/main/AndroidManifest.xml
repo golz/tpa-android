@@ -12,6 +12,8 @@
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+
+        <!--Login-->
         <activity
             android:name=".activity.LoginActivity"
             android:screenOrientation="portrait"
@@ -23,21 +25,35 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <!--Register-->
         <activity
             android:name=".activity.RegisterActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar"
             android:windowSoftInputMode="adjustPan" />
+
+        <!--Home-->
         <activity
             android:name=".activity.HomeActivity"
             android:label="@string/title_activity_home"
             android:theme="@style/AppTheme.NoActionBar" />
-        <activity android:name=".activity.ProfileActivity"
-            android:label="My Profile"></activity>
 
-        <activity android:name=".activity.FoodActivity"></activity>
+        <!--Profile-->
+        <activity android:name=".activity.ProfileActivity"
+            android:label="My Profile"/>
+
+        <!--Insert Food-->
+        <activity android:name=".activity.FoodActivity"
+            android:label="Food"
+            />
+
+        <!--Instructor Chat-->
         <activity android:name=".activity.ChatRoomActivity"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+            android:theme="@style/AppTheme.NoActionBar"
+            android:label="Chat"
+            />
+
         <meta-data android:name="com.facebook.sdk.ApplicationId"
             android:value="@string/facebook_app_id"/>
     </application>

@@ -1,4 +1,4 @@
-package com.michelle.goldwin.tpamobile.chatinstructor;
+package com.michelle.goldwin.tpamobile.object;
 
 import java.util.Date;
 

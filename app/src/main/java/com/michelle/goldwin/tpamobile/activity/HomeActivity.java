@@ -31,6 +31,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.michelle.goldwin.tpamobile.R;
 import com.michelle.goldwin.tpamobile.chatinstructor.ChatInstructorFragment;
+import com.michelle.goldwin.tpamobile.global.LoggedUserInformation;
 import com.michelle.goldwin.tpamobile.googlemaps.GoogleMapsFragment;
 import com.michelle.goldwin.tpamobile.object.User;
 import com.michelle.goldwin.tpamobile.todolist.TodoListFragment;
@@ -66,7 +67,7 @@ public class HomeActivity extends AppCompatActivity
             finish();
             startActivity(new Intent(getApplicationContext(), LoginActivity.class));
         }
-        FirebaseUser loggedUser = firebaseAuth.getCurrentUser();
+        final FirebaseUser loggedUser = firebaseAuth.getCurrentUser();
         progressDialog =  new ProgressDialog(this);
 
         /* BEGIN READ OLD DATA WITH DATABASE REFERENCE */
@@ -127,6 +128,13 @@ public class HomeActivity extends AppCompatActivity
                 {
                     if(user.profileurl != null) Picasso.with(getApplicationContext()).load(user.profileurl).resize(128,128).into(imgProfile);
                     if(user.fullname != null)   lblUserFullname.setText(user.fullname);
+
+                    /*Set Static LoggedUserInformation*/
+                    if(user.fullname != null) LoggedUserInformation.getInstance().setFullname(user.fullname);
+                    if(user.DOB != null) LoggedUserInformation.getInstance().setDOB(user.DOB);
+                    if(user.height != null) LoggedUserInformation.getInstance().setHeight(user.height);
+                    if(user.weight != null) LoggedUserInformation.getInstance().setWeight(user.weight);
+                    if(user.profileurl != null) LoggedUserInformation.getInstance().setProfileurl(user.profileurl);
                 }
                 else
                 {

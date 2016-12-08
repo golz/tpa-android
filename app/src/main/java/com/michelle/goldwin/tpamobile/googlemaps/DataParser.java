@@ -72,7 +72,7 @@ public class DataParser {
             googlePlaceMap.put("lat", latitude);
             googlePlaceMap.put("lng", longitude);
             googlePlaceMap.put("reference", reference);
-            Log.d("getPlace","Putting Place");
+            //Log.d("getPlace","Putting Place");
         } catch (JSONException e) {
             e.printStackTrace();
         }

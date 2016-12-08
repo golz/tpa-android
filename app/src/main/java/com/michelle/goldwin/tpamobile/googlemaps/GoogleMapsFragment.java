@@ -184,6 +184,8 @@ public class GoogleMapsFragment extends Fragment implements LocationListener,Goo
     private void googleMapGetPlace(String place)
     {
         googleMap.clear();
+        arrayPoints.clear();
+
         String url = getUrl(latitude,longitude,place);
         Object[] DataTransfer = new Object[2];
         DataTransfer[0] = googleMap;
@@ -231,8 +233,18 @@ public class GoogleMapsFragment extends Fragment implements LocationListener,Goo
     {
         StringBuilder googlePlacesUrl = new StringBuilder("http://maps.googleapis.com/maps/api/directions/json?");
         googlePlacesUrl.append("origin=" + origin.latitude + "," + origin.longitude);
+
+        // Waypoints
+        String waypoints = "";
+        for(int i=2;i<arrayPoints.size();i++){
+            LatLng point  = (LatLng) arrayPoints.get(i);
+            if(i==2)
+                waypoints = "waypoints=";
+            waypoints += point.latitude + "," + point.longitude + "|";
+        }
+
         googlePlacesUrl.append("&destination=" + destination.latitude + "," + origin.longitude);
-        googlePlacesUrl.append("&sensor=false&mode=driving&alternatives=true");
+        googlePlacesUrl.append("&sensor=false&"+ waypoints);
         return googlePlacesUrl.toString();
     }
     private class GetPolylinePlacesData extends AsyncTask<Object, String, String> {
@@ -297,6 +309,7 @@ public class GoogleMapsFragment extends Fragment implements LocationListener,Goo
                 for (int z = 0; z < list.size(); z++) {
                     LatLng point = list.get(z);
                     options.add(point);
+                    //googleMap.addMarker(new MarkerOptions().position(point).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN)));
                 }
                 line = googleMap.addPolyline(options);
             } catch (Exception e) {

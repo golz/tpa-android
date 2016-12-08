@@ -61,8 +61,8 @@ public class GetNearbyPlacesData extends AsyncTask<Object, String, String>{
 
             googleMap.addMarker(markerOptions);
             markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED));
-            googleMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
-            googleMap.animateCamera(CameraUpdateFactory.zoomTo(10));
+            //googleMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
+            //googleMap.animateCamera(CameraUpdateFactory.zoomTo(15));
         }
     }
 }

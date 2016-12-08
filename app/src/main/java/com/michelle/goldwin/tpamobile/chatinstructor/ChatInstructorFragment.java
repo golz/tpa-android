@@ -19,7 +19,6 @@ import com.michelle.goldwin.tpamobile.activity.ChatRoomActivity;
  */
 public class ChatInstructorFragment extends Fragment {
 
-
     public ChatInstructorFragment() {
         // Required empty public constructor
     }

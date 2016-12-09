@@ -77,11 +77,6 @@ public class ChatRoomActivity extends AppCompatActivity {
         databaseReference = FirebaseDatabase.getInstance().getReference("users/"+extra.getString("key")+"/chats");
         /* END INITIALIZE */
 
-
-
-        /**
-         * TODO: Change to name for Toolbar's title
-         */
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setTitle(extra.getString("name"));

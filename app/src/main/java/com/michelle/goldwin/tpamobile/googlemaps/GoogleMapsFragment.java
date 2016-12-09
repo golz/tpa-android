@@ -78,6 +78,7 @@ public class GoogleMapsFragment extends Fragment implements LocationListener,Goo
 
     /* Target Points */
     private String searchWhat = "gym";
+    private Marker selectedMarker;
 
     /* PolyLine */
     private ArrayList<LatLng> arrayPoints = null;
@@ -155,6 +156,7 @@ public class GoogleMapsFragment extends Fragment implements LocationListener,Goo
                 btnGym.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
+                        btnGym.setText("Scan for Nearby Gym");
                         googleMapGetPlace(searchWhat);
                     }
                 });
@@ -162,7 +164,9 @@ public class GoogleMapsFragment extends Fragment implements LocationListener,Goo
                     @Override
                     public boolean onMarkerClick(Marker marker) {
                         googleGetDirection(new LatLng(lastLocation.getLatitude(),lastLocation.getLongitude()),marker.getPosition());
-                        marker.showInfoWindow();
+                        selectedMarker = marker;
+                        selectedMarker.showInfoWindow();
+                        btnGym.setText(selectedMarker.getTitle().toString());
                         return true;
                     }
                 });
@@ -205,8 +209,6 @@ public class GoogleMapsFragment extends Fragment implements LocationListener,Goo
     }
     /* END GOOGLE MAPS NEARBY PLACE */
 
-
-
     /*
     * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
     * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * l o l * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
@@ -219,6 +221,8 @@ public class GoogleMapsFragment extends Fragment implements LocationListener,Goo
     private LatLng endLatLng;
     private void googleGetDirection(LatLng origin, LatLng destination)
     {
+        googleMapGetPlace(searchWhat);
+
         String url = getPoly(origin,destination);
         Object[] DataTransfer = new Object[2];
         DataTransfer[0] = googleMap;
@@ -233,18 +237,8 @@ public class GoogleMapsFragment extends Fragment implements LocationListener,Goo
     {
         StringBuilder googlePlacesUrl = new StringBuilder("http://maps.googleapis.com/maps/api/directions/json?");
         googlePlacesUrl.append("origin=" + origin.latitude + "," + origin.longitude);
-
-        // Waypoints
-        String waypoints = "";
-        for(int i=2;i<arrayPoints.size();i++){
-            LatLng point  = (LatLng) arrayPoints.get(i);
-            if(i==2)
-                waypoints = "waypoints=";
-            waypoints += point.latitude + "," + point.longitude + "|";
-        }
-
-        googlePlacesUrl.append("&destination=" + destination.latitude + "," + origin.longitude);
-        googlePlacesUrl.append("&sensor=false&"+ waypoints);
+        googlePlacesUrl.append("&destination=" + destination.latitude + "," + destination.longitude);
+        googlePlacesUrl.append("&sensor=false");
         return googlePlacesUrl.toString();
     }
     private class GetPolylinePlacesData extends AsyncTask<Object, String, String> {
@@ -274,7 +268,6 @@ public class GoogleMapsFragment extends Fragment implements LocationListener,Goo
 
         @Override
         protected void onPreExecute() {
-            // TODO Auto-generated method stub
             super.onPreExecute();
             progressDialog = new ProgressDialog(getContext());
             progressDialog.setMessage("Fetching routes...");
@@ -291,10 +284,6 @@ public class GoogleMapsFragment extends Fragment implements LocationListener,Goo
             }
         }
         public void drawPath(String result) {
-            if (line != null) {
-                googleMap.clear();
-                googleMapGetPlace(searchWhat);
-            }
             googleMap.addMarker(new MarkerOptions().position(startLatLng).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE)));
             googleMap.addMarker(new MarkerOptions().position(endLatLng).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED)));
             try {
@@ -305,11 +294,10 @@ public class GoogleMapsFragment extends Fragment implements LocationListener,Goo
                 String encodedString = overviewPolylines.getString("points");
                 List<LatLng> list = decodePoly(encodedString);
                 //Repeater
-                PolylineOptions options = new PolylineOptions().width(5).color(Color.BLUE);
+                PolylineOptions options = new PolylineOptions().width(5).color(getContext().getResources().getColor(R.color.colorBlue));
                 for (int z = 0; z < list.size(); z++) {
                     LatLng point = list.get(z);
                     options.add(point);
-                    //googleMap.addMarker(new MarkerOptions().position(point).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN)));
                 }
                 line = googleMap.addPolyline(options);
             } catch (Exception e) {

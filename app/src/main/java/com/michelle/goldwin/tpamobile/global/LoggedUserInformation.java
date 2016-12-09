@@ -14,15 +14,6 @@ public class LoggedUserInformation {
     private Double height;
     private Double weight;
     private String profileurl;
-    private String key;
-
-    public String getKey() {
-        return key;
-    }
-
-    public void setKey(String key) {
-        this.key = FirebaseAuth.getInstance().getCurrentUser().getUid();
-    }
 
     public static LoggedUserInformation getInstance() {
         if(instance == null)

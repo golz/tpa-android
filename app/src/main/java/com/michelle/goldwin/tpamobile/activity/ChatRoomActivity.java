@@ -1,5 +1,6 @@
 package com.michelle.goldwin.tpamobile.activity;
 
+import android.app.ProgressDialog;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
@@ -37,6 +38,7 @@ public class ChatRoomActivity extends AppCompatActivity {
         adapter = new FirebaseListAdapter<ChatMessage>(this, ChatMessage.class, R.layout.single_message, FirebaseDatabase.getInstance().getReference().child("chats")) {
             @Override
             protected void populateView(View v, ChatMessage model, int position) {
+
 
                 TextView msgTxt = (TextView) v.findViewById(R.id.msgTxt);
                 TextView msgUser = (TextView) v.findViewById(R.id.msgUser);

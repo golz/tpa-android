@@ -1,6 +1,7 @@
 package com.michelle.goldwin.tpamobile.chatinstructor;
 
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -46,6 +47,10 @@ public class ChatFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view =  inflater.inflate(R.layout.fragment_chat_instructor, container, false);
+
+        final ProgressDialog progressDialog = new ProgressDialog(getContext());
+        progressDialog.setMessage("Loading User Data..");
+        progressDialog.show();
 
         final ListView instructorListView = (ListView) view.findViewById(R.id.listViewChat);
         instructorListView.setAdapter(getInstructorAdapter());

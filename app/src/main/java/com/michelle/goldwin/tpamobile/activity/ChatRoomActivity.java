@@ -52,8 +52,8 @@ public class ChatRoomActivity extends AppCompatActivity {
                 };
             }
         };
-            listMsg.setAdapter(adapter);
-        }
+        listMsg.setAdapter(adapter);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

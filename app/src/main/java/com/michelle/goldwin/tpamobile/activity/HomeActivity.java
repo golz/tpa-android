@@ -31,11 +31,16 @@ import com.michelle.goldwin.tpamobile.R;
 import com.michelle.goldwin.tpamobile.chatinstructor.ChatFragment;
 import com.michelle.goldwin.tpamobile.global.LoggedUserInformation;
 import com.michelle.goldwin.tpamobile.googlemaps.GoogleMapsFragment;
+import com.michelle.goldwin.tpamobile.object.ChatMessage;
+import com.michelle.goldwin.tpamobile.object.History;
 import com.michelle.goldwin.tpamobile.object.User;
 import com.michelle.goldwin.tpamobile.todolist.ChooseMissionFragment;
 import com.michelle.goldwin.tpamobile.todolist.TodoListFragment;
 import com.michelle.goldwin.tpamobile.viewpager.ViewPagerAdapter;
 import com.squareup.picasso.Picasso;
+
+import java.text.DateFormat;
+import java.util.Date;
 
 public class HomeActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -88,11 +93,15 @@ public class HomeActivity extends AppCompatActivity
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+        /* Testing */
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
+                String currentDateTimeString = DateFormat.getDateTimeInstance().format(new Date());
+                History history = new History("Testong",(double)100,currentDateTimeString);
+                FirebaseDatabase.getInstance().getReference().child("histories").child(loggedUser.getUid()).push().setValue(history);
+                Snackbar.make(view, "Testongers sukses", Snackbar.LENGTH_SHORT)
                         .setAction("Action", null).show();
             }
         });
@@ -200,11 +209,10 @@ public class HomeActivity extends AppCompatActivity
 
         if(id == R.id.nav_update_profile){
             startActivity(new Intent(getApplicationContext(),ProfileActivity.class));
-        }
-        else if (id == R.id.nav_insert_food) {
+        } else if (id == R.id.nav_insert_food) {
             startActivity(new Intent(getApplicationContext(),FoodActivity.class));
         } else if (id == R.id.nav_calorie_history) {
-
+            startActivity(new Intent(getApplicationContext(),HistoryActivity.class));
         } else if (id == R.id.nav_logout) {
             firebaseAuth.signOut();                 // Firebase Logout
             LoginManager.getInstance().logOut();    // Facebook Logout

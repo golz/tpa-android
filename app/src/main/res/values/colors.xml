@@ -5,4 +5,6 @@
     <color name="colorAccent">#FF9800</color>
     <color name="colorFacebook">#3B5998</color>
     <color name="colorBlue">#2196F3</color>
+    <color name="colorRed">#F44336</color>
+    <color name="colorGreen">#4CAF50</color>
 </resources>

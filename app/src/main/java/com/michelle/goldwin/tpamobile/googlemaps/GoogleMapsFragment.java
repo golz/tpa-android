@@ -174,6 +174,7 @@ public class GoogleMapsFragment extends Fragment implements LocationListener,Goo
                 googleMap.setOnMapLongClickListener(new GoogleMap.OnMapLongClickListener() {
                     @Override
                     public void onMapLongClick(LatLng latLng) {
+                        btnGym.setText("Scan for Nearby Gym");
                         googleMap.clear();
                         arrayPoints.clear();
                     }

@@ -9,7 +9,8 @@ import java.util.Date;
 public class ChatMessage {
 
     private String message;
-    private String user;
+    private String sender;
+    private String receiver;
     private long time;
     private String id;
 
@@ -18,9 +19,26 @@ public class ChatMessage {
 
     }
 
-    public ChatMessage(String message, String user, String id){
+    public String getSender() {
+        return sender;
+    }
+
+    public void setSender(String sender) {
+        this.sender = sender;
+    }
+
+    public String getReceiver() {
+        return receiver;
+    }
+
+    public void setReceiver(String receiver) {
+        this.receiver = receiver;
+    }
+
+    public ChatMessage(String message, String sender,String receiver, String id){
         this.message = message;
-        this.user = user;
+        this.sender = sender;
+        this.receiver = receiver;
         this.id = id;
         time = new Date().getTime();
     }
@@ -39,14 +57,6 @@ public class ChatMessage {
 
     public void setMessage(String message) {
         this.message = message;
-    }
-
-    public String getUser() {
-        return user;
-    }
-
-    public void setUser(String user) {
-        this.user = user;
     }
 
     public long getTime() {

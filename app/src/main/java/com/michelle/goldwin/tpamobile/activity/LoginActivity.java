@@ -63,12 +63,12 @@ public class LoginActivity extends AppCompatActivity {
         callbackManager = CallbackManager.Factory.create();
 
                 /* BEGIN MIDDLE AUTH REDIRECT */
-                if(firebaseAuth.getCurrentUser() != null)
-                {
-                    //Redirecting if user has been logged in before
-                    finish();
-                    startActivity(new Intent(getApplicationContext(),HomeActivity.class));
-                }
+        if(firebaseAuth.getCurrentUser() != null)
+        {
+            //Redirecting if user has been logged in before
+            finish();
+            startActivity(new Intent(getApplicationContext(),HomeActivity.class));
+        }
                 /* END MIDDLE AUTH REDIRECT */
 
         /* END INITIALIZE */

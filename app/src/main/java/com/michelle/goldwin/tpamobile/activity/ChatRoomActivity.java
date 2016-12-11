@@ -9,13 +9,10 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.firebase.ui.database.FirebaseListAdapter;
-import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.messaging.FirebaseMessagingService;
 import com.michelle.goldwin.tpamobile.R;
 import com.michelle.goldwin.tpamobile.object.ChatMessage;
 import com.michelle.goldwin.tpamobile.global.LoggedUserInformation;
@@ -37,7 +34,7 @@ public class ChatRoomActivity extends AppCompatActivity {
 
         ListView listMsg = (ListView) findViewById(R.id.msgList);
 
-        adapter = new FirebaseListAdapter<ChatMessage>(this, ChatMessage.class, R.layout.message, FirebaseDatabase.getInstance().getReference().child("users/"+extra.getString("key")+"/chats")) {
+        adapter = new FirebaseListAdapter<ChatMessage>(this, ChatMessage.class, R.layout.single_message, FirebaseDatabase.getInstance().getReference().child("chats")) {
             @Override
             protected void populateView(View v, ChatMessage model, int position) {
 
@@ -45,10 +42,10 @@ public class ChatRoomActivity extends AppCompatActivity {
                 TextView msgUser = (TextView) v.findViewById(R.id.msgUser);
                 TextView msgTime = (TextView) v.findViewById(R.id.msgTime);
 
-                if (model.getUser().equals(LoggedUserInformation.getInstance().getFullname()) || model.getUser().equals(extra.getString("name"))) {
+                if ((model.getSender().equals(LoggedUserInformation.getInstance().getFullname()) && model.getReceiver().equals(extra.getString("name"))) || (model.getReceiver().equals(LoggedUserInformation.getInstance().getFullname()) && model.getSender().equals(extra.getString("name")))) {
                     {
                         msgTxt.setText(model.getMessage());
-                        msgUser.setText(model.getUser());
+                        msgUser.setText(model.getSender());
                         msgTime.setText(android.text.format.DateFormat.format("dd-MM-yyyy (HH:mm:ss)", model.getTime()));
                     }
 
@@ -74,7 +71,7 @@ public class ChatRoomActivity extends AppCompatActivity {
         displayChat();
         btnSend = (FloatingActionButton) findViewById(R.id.btnSend);
         inp    =  (EditText) findViewById(R.id.input);
-        databaseReference = FirebaseDatabase.getInstance().getReference("users/"+extra.getString("key")+"/chats");
+        databaseReference = FirebaseDatabase.getInstance().getReference("chats");
         /* END INITIALIZE */
 
         toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -85,9 +82,8 @@ public class ChatRoomActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 if(!TextUtils.isEmpty(inp.getText())) {
-
-                    ChatMessage chat = new ChatMessage(inp.getText().toString(), LoggedUserInformation.getInstance().getFullname() , extra.getString("key"));
-                    FirebaseDatabase.getInstance().getReference().child("users/"+extra.getString("key")+"/chats").push().setValue(chat);
+                    ChatMessage chat = new ChatMessage(inp.getText().toString(), LoggedUserInformation.getInstance().getFullname(),extra.getString("name"),extra.getString("key"));
+                    FirebaseDatabase.getInstance().getReference().child("chats").push().setValue(chat);
                     inp.setText("");
                     displayChat();
                 }
@@ -98,5 +94,6 @@ public class ChatRoomActivity extends AppCompatActivity {
     /**
      * ATTENTION: This was auto-generated to implement the App Indexing API.
      * See https://g.co/AppIndexing/AndroidStudio for more information.
+
      */
 }

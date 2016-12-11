@@ -36,6 +36,7 @@ public class ChatFragment extends Fragment {
   private FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
   private DatabaseReference databaseReference;
 
+
     public ChatFragment() {
         // Required empty public constructor
     }

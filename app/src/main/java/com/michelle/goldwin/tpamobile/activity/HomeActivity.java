@@ -32,6 +32,7 @@ import com.michelle.goldwin.tpamobile.chatinstructor.ChatFragment;
 import com.michelle.goldwin.tpamobile.global.LoggedUserInformation;
 import com.michelle.goldwin.tpamobile.googlemaps.GoogleMapsFragment;
 import com.michelle.goldwin.tpamobile.object.User;
+import com.michelle.goldwin.tpamobile.todolist.ChooseMissionFragment;
 import com.michelle.goldwin.tpamobile.todolist.TodoListFragment;
 import com.michelle.goldwin.tpamobile.viewpager.ViewPagerAdapter;
 import com.squareup.picasso.Picasso;
@@ -149,7 +150,7 @@ public class HomeActivity extends AppCompatActivity
 
         /* CALL `ViewPagerAdapter` */
         ViewPagerAdapter viewPagerAdapter = new ViewPagerAdapter(getSupportFragmentManager());
-        viewPagerAdapter.addFragment(new TodoListFragment(),"Missions");
+        viewPagerAdapter.addFragment(new ChooseMissionFragment(),"Missions");
         viewPagerAdapter.addFragment(new GoogleMapsFragment(),"Gym Location");
         viewPagerAdapter.addFragment(new ChatFragment(),"Instructor");
         /* END CALL */

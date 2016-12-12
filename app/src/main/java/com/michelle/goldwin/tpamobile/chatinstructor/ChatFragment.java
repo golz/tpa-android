@@ -9,6 +9,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -36,24 +37,31 @@ public class ChatFragment extends Fragment {
 
   private FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
   private DatabaseReference databaseReference;
-
+  private FirebaseListAdapter<User> userFirebaseListAdapter;
 
     public ChatFragment() {
         // Required empty public constructor
     }
 
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        View view =  inflater.inflate(R.layout.fragment_chat_instructor, container, false);
-
-        final ProgressDialog progressDialog = new ProgressDialog(getContext());
-        progressDialog.setMessage("Loading User Data..");
-        progressDialog.show();
+    public void displayUserList(View view){
 
         final ListView instructorListView = (ListView) view.findViewById(R.id.listViewChat);
-        instructorListView.setAdapter(getInstructorAdapter());
+
+        userFirebaseListAdapter = new FirebaseListAdapter<User>(getActivity(),User.class,R.layout.single_instructor,FirebaseDatabase.getInstance().getReference().child("users")) {
+            @Override
+            protected void populateView(View v, User model, int position) {
+
+
+                    TextView instructorName     = (TextView) v.findViewById(R.id.lblInstructorName);
+                    ImageView instructorImage   = (ImageView) v.findViewById(R.id.imgProfile);
+
+                    instructorName.setText(model.fullname);
+                    instructorImage.setImageResource(R.drawable.chat);
+
+            }
+        };
+
+        instructorListView.setAdapter(userFirebaseListAdapter);
 
         instructorListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -61,10 +69,21 @@ public class ChatFragment extends Fragment {
 
                 TextView user = (TextView) view.findViewById(R.id.lblInstructorName);
 
-                    startActivity(new Intent(getContext(), ChatRoomActivity.class).putExtra("key",FirebaseAuth.getInstance().getCurrentUser().getUid()).putExtra("name",user.getText().toString()));
+                startActivity(new Intent(getContext(), ChatRoomActivity.class).putExtra("key",FirebaseAuth.getInstance().getCurrentUser().getUid()).putExtra("name",user.getText().toString()));
 
             }
         });
+
+
+    }
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        // Inflate the layout for this fragment
+        View view =  inflater.inflate(R.layout.fragment_chat_instructor, container, false);
+        displayUserList(view);
+
         return view;
     }
     public InstructorListAdapter getInstructorAdapter()

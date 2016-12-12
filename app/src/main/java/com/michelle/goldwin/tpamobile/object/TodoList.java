@@ -5,14 +5,14 @@ package com.michelle.goldwin.tpamobile.object;
  */
 
 public class TodoList {
-    String value;
+    int value;
     int cal;
 
-    public String getValue() {
+    public int getValue() {
         return value;
     }
 
-    public void setValue(String value) {
+    public void setValue(int value) {
         this.value = value;
     }
 

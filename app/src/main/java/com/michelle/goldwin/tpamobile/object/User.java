@@ -26,4 +26,5 @@ public class User {
         this.updateStatus = updateStatus;
         this.profileurl = profileurl;
     }
+
 }

@@ -93,19 +93,6 @@ public class HomeActivity extends AppCompatActivity
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        /* Testing */
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                String currentDateTimeString = DateFormat.getDateTimeInstance().format(new Date());
-                History history = new History("Testong",(double)100,currentDateTimeString);
-                FirebaseDatabase.getInstance().getReference().child("histories").child(loggedUser.getUid()).push().setValue(history);
-                Snackbar.make(view, "Testongers sukses", Snackbar.LENGTH_SHORT)
-                        .setAction("Action", null).show();
-            }
-        });
-
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
@@ -159,7 +146,7 @@ public class HomeActivity extends AppCompatActivity
 
         /* CALL `ViewPagerAdapter` */
         ViewPagerAdapter viewPagerAdapter = new ViewPagerAdapter(getSupportFragmentManager());
-        viewPagerAdapter.addFragment(new ChooseMissionFragment(),"Missions");
+        viewPagerAdapter.addFragment(new TodoListFragment(),"Missions");
         viewPagerAdapter.addFragment(new GoogleMapsFragment(),"Gym Location");
         viewPagerAdapter.addFragment(new ChatFragment(),"Instructor");
         /* END CALL */

@@ -4,13 +4,19 @@
     android:layout_height="match_parent"
     android:orientation="horizontal" >
     <CheckBox
-        android:id="@+id/todolistCheckBox"
+        android:id="@+id/todoListCheckBox"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="" />
     <TextView
-        android:id="@+id/todolistTxt"
+        android:id="@+id/todoListTxt"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="TextView" />
+        android:text="" />
+
+    <TextView
+        android:text="TextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/todoListCal" />
 </LinearLayout>

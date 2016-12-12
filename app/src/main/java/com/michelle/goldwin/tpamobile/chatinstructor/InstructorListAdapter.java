@@ -5,6 +5,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.michelle.goldwin.tpamobile.R;
@@ -53,8 +54,10 @@ public class InstructorListAdapter extends BaseAdapter{
             LayoutInflater inflater = LayoutInflater.from(context);
             view = inflater.inflate(R.layout.single_instructor,null);
         }
-        TextView instructorName = (TextView) view.findViewById(R.id.lblInstructorName);
+        TextView instructorName     = (TextView) view.findViewById(R.id.lblInstructorName);
+        ImageView instructorImage   = (ImageView) view.findViewById(R.id.imgProfile);
         instructorName.setText(getItem(i).toString());
+        instructorImage.setImageResource(R.drawable.chat);
 
         //view.setTag(); buat id nanti
         return view;

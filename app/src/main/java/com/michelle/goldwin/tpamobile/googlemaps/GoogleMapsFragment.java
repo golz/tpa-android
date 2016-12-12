@@ -285,8 +285,8 @@ public class GoogleMapsFragment extends Fragment implements LocationListener,Goo
             }
         }
         public void drawPath(String result) {
-            googleMap.addMarker(new MarkerOptions().position(startLatLng).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE)));
-            googleMap.addMarker(new MarkerOptions().position(endLatLng).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED)));
+            //googleMap.addMarker(new MarkerOptions().position(startLatLng).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ORANGE)));
+            googleMap.addMarker(new MarkerOptions().position(endLatLng).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ORANGE)));
             try {
                 final JSONObject json = new JSONObject(result);
                 JSONArray routeArray = json.getJSONArray("routes");
@@ -295,7 +295,7 @@ public class GoogleMapsFragment extends Fragment implements LocationListener,Goo
                 String encodedString = overviewPolylines.getString("points");
                 List<LatLng> list = decodePoly(encodedString);
                 //Repeater
-                PolylineOptions options = new PolylineOptions().width(5).color(getContext().getResources().getColor(R.color.colorBlue));
+                PolylineOptions options = new PolylineOptions().width(5).color(getContext().getResources().getColor(R.color.colorPrimary));
                 for (int z = 0; z < list.size(); z++) {
                     LatLng point = list.get(z);
                     options.add(point);
@@ -353,11 +353,11 @@ public class GoogleMapsFragment extends Fragment implements LocationListener,Goo
         latitude    = (double)location.getLatitude();
         longitude   = (double)location.getLongitude();
         LatLng latLng = new LatLng(location.getLatitude(),location.getLongitude());
-        MarkerOptions markerOptions = new MarkerOptions();
-        markerOptions.position(latLng);
-        markerOptions.title("Current Position");
-        markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE));
-        currentLocationMarker = googleMap.addMarker(markerOptions);
+//        MarkerOptions markerOptions = new MarkerOptions();
+//        markerOptions.position(latLng);
+//        markerOptions.title("Current Position");
+//        markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ORANGE));
+//        currentLocationMarker = googleMap.addMarker(markerOptions);
 
         googleMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
         googleMap.animateCamera(CameraUpdateFactory.zoomTo(15));

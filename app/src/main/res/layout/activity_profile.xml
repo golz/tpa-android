@@ -105,7 +105,7 @@
             android:id="@+id/btnUpdate"
             android:textAlignment="center"
             android:textColor="@android:color/white"
-            android:background="@color/colorPrimaryDark" />
+            android:background="@color/colorPrimary" />
 
         <Button
             android:text="Cancel"
@@ -116,7 +116,8 @@
             android:layout_marginTop="18dp"
             android:id="@+id/btnCancel"
             android:textAlignment="center"
-            android:textColor="@color/colorPrimaryDark" />
+            android:textColor="@android:color/white"
+            android:background="@android:color/darker_gray" />
 
     </LinearLayout>
 </RelativeLayout>

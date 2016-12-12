@@ -159,7 +159,7 @@ public class HomeActivity extends AppCompatActivity
 
         /* CALL `ViewPagerAdapter` */
         ViewPagerAdapter viewPagerAdapter = new ViewPagerAdapter(getSupportFragmentManager());
-        viewPagerAdapter.addFragment(new ChooseMissionFragment(),"Missions");
+        viewPagerAdapter.addFragment(new TodoListFragment(),"Missions");
         viewPagerAdapter.addFragment(new GoogleMapsFragment(),"Gym Location");
 
         if(!FirebaseAuth.getInstance().getCurrentUser().getUid().equals("9DOHdZE6tvelBdyBWtwZuMzKPuo1") && !FirebaseAuth.getInstance().getCurrentUser().getUid().equals("rL9F6eUljrWbTfGZoStgV05n1BH3")){

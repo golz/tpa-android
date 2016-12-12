@@ -7,6 +7,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -23,7 +24,7 @@ import com.michelle.goldwin.tpamobile.object.TodoList;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class TodoListFragment extends Fragment {
+public class TodoListFragment extends Fragment implements CompoundButton.OnCheckedChangeListener{
 
     private DatabaseReference databaseReference;
     private Bundle extra;
@@ -45,6 +46,7 @@ public class TodoListFragment extends Fragment {
 
         return view;
     }
+
 
     public TodoListAdapter getData(){
 
@@ -69,6 +71,16 @@ public class TodoListFragment extends Fragment {
 
             }
         });
+
+
         return todoListAdapter;
+    }
+
+
+    @Override
+    public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+
+
+
     }
 }

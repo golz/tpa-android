@@ -31,6 +31,7 @@ import com.michelle.goldwin.tpamobile.R;
 import com.michelle.goldwin.tpamobile.chatinstructor.ChatFragment;
 import com.michelle.goldwin.tpamobile.global.LoggedUserInformation;
 import com.michelle.goldwin.tpamobile.googlemaps.GoogleMapsFragment;
+import com.michelle.goldwin.tpamobile.object.Calorie;
 import com.michelle.goldwin.tpamobile.object.ChatMessage;
 import com.michelle.goldwin.tpamobile.object.History;
 import com.michelle.goldwin.tpamobile.object.User;
@@ -40,6 +41,8 @@ import com.michelle.goldwin.tpamobile.viewpager.ViewPagerAdapter;
 import com.squareup.picasso.Picasso;
 
 import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public class HomeActivity extends AppCompatActivity
@@ -87,6 +90,29 @@ public class HomeActivity extends AppCompatActivity
             public void onCancelled(DatabaseError databaseError) {
             }
         });
+        /*SET TODAY CALORIE*/
+        try {
+            Date today = new Date();
+            DateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
+            Date todayWithZeroTime = formatter.parse(formatter.format(today));
+            databaseReference = FirebaseDatabase.getInstance().getReference("calories/"+firebaseAuth.getCurrentUser().getUid().toString()+"/"+todayWithZeroTime.toString());
+            databaseReference.addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    Calorie calorie = dataSnapshot.getValue(Calorie.class);
+                    if(calorie != null)
+                        LoggedUserInformation.getInstance().setCurrentCalorie(calorie.value);
+                    else
+                        LoggedUserInformation.getInstance().setCurrentCalorie((double)0);
+                }
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+                }
+            });
+
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
         /* BEGIN READ OLD DATA WITH DATABASE REFERENCE */
         /* END INITIALIZE */
 

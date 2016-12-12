@@ -10,12 +10,30 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="com.michelle.goldwin.tpamobile.activity.HistoryActivity">
 
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="30dp"
+        android:text="Today calories : 3000 calories"
+        android:textSize="20dp"
+        android:textStyle="bold"
+        android:id="@+id/totalCalories"
+        android:gravity="center_horizontal"/>
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="20dp"
+        android:text="Recommended calories per day is 2000"
+        android:textSize="15dp"
+        android:layout_marginBottom="18dp"
+        android:layout_below="@id/totalCalories"
+        android:id="@+id/suggestCalorie"
+        android:gravity="center_horizontal"/>
+
     <ListView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:id="@+id/historyList"
-        android:layout_alignParentTop="true"
         android:layout_alignParentStart="true"
+        android:layout_below="@id/suggestCalorie"
         android:dividerHeight="16dp"
         android:divider="@android:color/transparent"/>
 </RelativeLayout>

@@ -14,6 +14,13 @@ public class LoggedUserInformation {
     private Double height;
     private Double weight;
     private String profileurl;
+    private Double currentCalorie;
+
+    public static void setInstance(LoggedUserInformation instance) {
+        LoggedUserInformation.instance = instance;
+    }
+
+
 
     public static LoggedUserInformation getInstance() {
         if(instance == null)
@@ -72,4 +79,8 @@ public class LoggedUserInformation {
     public void setProfileurl(String profileurl) {
         this.profileurl = profileurl;
     }
+
+    public Double getCurrentCalorie() {return currentCalorie;}
+
+    public void setCurrentCalorie(Double currentCalorie) {this.currentCalorie = currentCalorie;}
 }

@@ -25,11 +25,15 @@ import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.michelle.goldwin.tpamobile.R;
+import com.michelle.goldwin.tpamobile.global.LoggedUserInformation;
+import com.michelle.goldwin.tpamobile.object.Calorie;
 import com.michelle.goldwin.tpamobile.object.ChatMessage;
 import com.michelle.goldwin.tpamobile.object.History;
 import com.michelle.goldwin.tpamobile.object.TodoList;
 
 import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 /**
@@ -60,7 +64,8 @@ public class TodoListFragment extends Fragment{
 
                 DatabaseReference ref = getRef(position);
                 name.setText(ref.getKey());
-                cal.setText(Integer.toString(model.getCal()));
+                /* ADD POSITIVE AND NEGATIVE VIEW FOR USER */
+                cal.setText("-"+Integer.toString(model.getCal()));
 
 
                 cb.setOnClickListener(new View.OnClickListener(){
@@ -72,6 +77,26 @@ public class TodoListFragment extends Fragment{
                         Snackbar.make(view, "Added to history success", Snackbar.LENGTH_SHORT)
                                 .setAction("Action", null).show();
 
+                        //Modify current calorie too
+                        /* BEGIN BATAS GD*/
+                        Date today = new Date();
+                        try {
+                            DateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
+                            Date todayWithZeroTime = formatter.parse(formatter.format(today));
+                            if(LoggedUserInformation.getInstance().getCurrentCalorie() >= Double.parseDouble(cal.getText().toString()))
+                            {
+                                Calorie calorie = new Calorie(LoggedUserInformation.getInstance().getCurrentCalorie() + Double.parseDouble(cal.getText().toString()));
+                                LoggedUserInformation.getInstance().setCurrentCalorie(LoggedUserInformation.getInstance().getCurrentCalorie() + calorie.value);
+                                FirebaseDatabase.getInstance().getReference().child("calories").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child(todayWithZeroTime.toString()).setValue(calorie);
+                            }
+                            else
+                            {
+                                Snackbar.make(view,"You need to eat something",Snackbar.LENGTH_LONG).setAction("Action",null).show();
+                            }
+                        } catch (ParseException e) {
+                            e.printStackTrace();
+                        }
+                        /* END BATAS GD*/
                     }
                 });
 

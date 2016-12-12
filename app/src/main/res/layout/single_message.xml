@@ -2,27 +2,32 @@
     android:layout_width="match_parent" android:layout_height="match_parent">
 
     <TextView
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
         android:layout_alignParentStart="true"
         android:id="@+id/msgUser"
+        android:text="user"
         android:textStyle="normal|bold" />
 
     <TextView
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignBottom="@+id/msgUser"
         android:layout_alignParentEnd="true"
+        android:text="time"
+        android:gravity="center"
+        android:visibility="invisible"
         android:id="@+id/msgTime" />
 
     <TextView
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@+id/msgUser"
         android:layout_alignParentStart="true"
         android:layout_marginTop="5dp"
         android:id="@+id/msgTxt"
         android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+        android:text="msg"
         android:textSize="18sp" />
 </RelativeLayout>

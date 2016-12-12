@@ -21,7 +21,11 @@
             android:id="@+id/btnGym"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Scan for Nearby Gym" />
+            android:text="Scan for Nearby Gym"
+            android:background="@color/colorPrimary"
+            android:textSize="14sp"
+            android:textColor="@android:color/white"
+            android:elevation="0dp" />
 
         <com.google.android.gms.maps.MapView
             android:id="@+id/mapView"

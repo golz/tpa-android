@@ -94,17 +94,17 @@ public class HomeActivity extends AppCompatActivity
         setSupportActionBar(toolbar);
 
         /* Testing */
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                String currentDateTimeString = DateFormat.getDateTimeInstance().format(new Date());
-                History history = new History("Testong",(double)100,currentDateTimeString);
-                FirebaseDatabase.getInstance().getReference().child("histories").child(loggedUser.getUid()).push().setValue(history);
-                Snackbar.make(view, "Testongers sukses", Snackbar.LENGTH_SHORT)
-                        .setAction("Action", null).show();
-            }
-        });
+//        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+//        fab.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                String currentDateTimeString = DateFormat.getDateTimeInstance().format(new Date());
+//                History history = new History("Testong",(double)100,currentDateTimeString);
+//                FirebaseDatabase.getInstance().getReference().child("histories").child(loggedUser.getUid()).push().setValue(history);
+//                Snackbar.make(view, "Testongers sukses", Snackbar.LENGTH_SHORT)
+//                        .setAction("Action", null).show();
+//            }
+//        });
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -159,14 +159,17 @@ public class HomeActivity extends AppCompatActivity
 
         /* CALL `ViewPagerAdapter` */
         ViewPagerAdapter viewPagerAdapter = new ViewPagerAdapter(getSupportFragmentManager());
-        viewPagerAdapter.addFragment(new ChooseMissionFragment(),"Missions");
-        viewPagerAdapter.addFragment(new GoogleMapsFragment(),"Gym Location");
-        viewPagerAdapter.addFragment(new ChatFragment(),"Instructor");
+        viewPagerAdapter.addFragment(new ChooseMissionFragment(),"");
+        viewPagerAdapter.addFragment(new GoogleMapsFragment(),"");
+        viewPagerAdapter.addFragment(new ChatFragment(),"");
         /* END CALL */
 
         /* COMBINE */
         viewPager.setAdapter(viewPagerAdapter);
         tabLayout.setupWithViewPager(viewPager);
+        tabLayout.getTabAt(0).setIcon(R.drawable.mission);
+        tabLayout.getTabAt(1).setIcon(R.drawable.map);
+        tabLayout.getTabAt(2).setIcon(R.drawable.chat);
     }
 
     @Override

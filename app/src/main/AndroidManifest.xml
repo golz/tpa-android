@@ -25,6 +25,7 @@
 
         <!-- Opening -->
 
+
         <!-- Login -->
         <activity
             android:name=".activity.LoginActivity"
@@ -33,6 +34,7 @@
             android:windowSoftInputMode="adjustPan">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
@@ -96,8 +98,10 @@
             android:name=".activity.HistoryActivity"
             android:label="Calorie History" />
 
+        <!-- Pop up Eat -->
+        <activity android:name=".activity.EatActivity" android:theme="@style/msgdPopupTheme"/>
 
-
+        <!--@style/AppTheme.PopupTheme-->
     </application>
 
 </manifest>

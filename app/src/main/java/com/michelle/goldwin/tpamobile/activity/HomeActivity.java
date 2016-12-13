@@ -119,6 +119,14 @@ public class HomeActivity extends AppCompatActivity
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+               startActivity(new Intent(getApplicationContext(),EatActivity.class));
+            }
+        });
+
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
@@ -172,14 +180,18 @@ public class HomeActivity extends AppCompatActivity
 
         /* CALL `ViewPagerAdapter` */
         ViewPagerAdapter viewPagerAdapter = new ViewPagerAdapter(getSupportFragmentManager());
-        viewPagerAdapter.addFragment(new TodoListFragment(),"Missions");
-        viewPagerAdapter.addFragment(new GoogleMapsFragment(),"Gym Location");
-        viewPagerAdapter.addFragment(new ChatFragment(),"Instructor");
+        viewPagerAdapter.addFragment(new TodoListFragment(),"");
+        viewPagerAdapter.addFragment(new GoogleMapsFragment(),"");
+        viewPagerAdapter.addFragment(new ChatFragment(),"");
         /* END CALL */
 
         /* COMBINE */
         viewPager.setAdapter(viewPagerAdapter);
         tabLayout.setupWithViewPager(viewPager);
+
+        tabLayout.getTabAt(0).setIcon(R.drawable.mission);
+        tabLayout.getTabAt(1).setIcon(R.drawable.map);
+        tabLayout.getTabAt(2).setIcon(R.drawable.chat);
     }
 
     @Override

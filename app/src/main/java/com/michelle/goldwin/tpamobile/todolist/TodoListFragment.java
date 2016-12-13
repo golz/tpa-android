@@ -66,6 +66,7 @@ public class TodoListFragment extends Fragment{
                 name.setText(ref.getKey());
                 /* ADD POSITIVE AND NEGATIVE VIEW FOR USER */
                 cal.setText("-"+Integer.toString(model.getCal()));
+                cal.setTextColor(getResources().getColor(R.color.colorGreen));
 
 
                 cb.setOnClickListener(new View.OnClickListener(){

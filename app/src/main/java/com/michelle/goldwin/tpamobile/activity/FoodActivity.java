@@ -41,17 +41,11 @@ public class FoodActivity extends AppCompatActivity {
                 TextView foodName       = (TextView) v.findViewById(R.id.lblFoodName);
                 TextView foodCalorie    = (TextView) v.findViewById(R.id.lblFoodCalorie);
                 foodName.setText(model.foodname);
-                foodCalorie.setText(model.calorie.toString());
+                foodCalorie.setText("+"+model.calorie.toString());
+                foodCalorie.setTextColor(getResources().getColor(R.color.colorPrimary));
             }
         };
         foodListView.setAdapter(adapter);
-
-        foodListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                Toast.makeText(getApplicationContext(), view.findViewById(R.id.lblFoodName).toString(), Toast.LENGTH_SHORT).show();
-            }
-        });
     }
     @Override
     protected void onCreate(Bundle savedInstanceState) {

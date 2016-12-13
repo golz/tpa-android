@@ -188,7 +188,7 @@ public class HomeActivity extends AppCompatActivity
         /* COMBINE */
         viewPager.setAdapter(viewPagerAdapter);
         tabLayout.setupWithViewPager(viewPager);
-
+        tabLayout.setBackgroundColor(getResources().getColor(R.color.colorPrimary));
         tabLayout.getTabAt(0).setIcon(R.drawable.mission);
         tabLayout.getTabAt(1).setIcon(R.drawable.map);
         tabLayout.getTabAt(2).setIcon(R.drawable.chat);

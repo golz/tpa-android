@@ -10,6 +10,11 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="com.michelle.goldwin.tpamobile.activity.EatActivity">
 
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/colorPrimary"
+        android:layout_marginBottom="5dp"/>
     <ListView
         android:layout_width="match_parent"
         android:layout_height="match_parent"

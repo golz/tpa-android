@@ -99,7 +99,9 @@
             android:label="Calorie History" />
 
         <!-- Pop up Eat -->
-        <activity android:name=".activity.EatActivity" android:theme="@style/msgdPopupTheme"/>
+        <activity android:name=".activity.EatActivity"
+            android:theme="@style/MSGD.PopupTheme"
+            android:label="Select Food" />
 
         <!--@style/AppTheme.PopupTheme-->
     </application>

@@ -51,7 +51,8 @@ public class EatActivity extends AppCompatActivity {
                 TextView foodName       = (TextView) v.findViewById(R.id.lblFoodName);
                 TextView foodCalorie    = (TextView) v.findViewById(R.id.lblFoodCalorie);
                 foodName.setText(model.foodname);
-                foodCalorie.setText(model.calorie.toString());
+                foodCalorie.setText("+"+model.calorie.toString());
+                foodCalorie.setTextColor(getResources().getColor(R.color.colorPrimary));
             }
         };
         foodListView.setAdapter(adapter);
@@ -70,8 +71,6 @@ public class EatActivity extends AppCompatActivity {
                         String currentDateTimeString = DateFormat.getDateTimeInstance().format(new Date());
                         History history = new History(foodName.getText().toString(),Double.parseDouble(foodCalorie.getText().toString()),currentDateTimeString);
                         FirebaseDatabase.getInstance().getReference().child("histories").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).push().setValue(history);
-//                                Snackbar.make(view, "Added to history success", Snackbar.LENGTH_SHORT)
-//                                        .setAction("Action", null).show();
 
                         /* BEGIN BATAS GD*/
                         Date today = new Date();

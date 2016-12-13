@@ -66,7 +66,7 @@ public class TodoListFragment extends Fragment{
                 name.setText(ref.getKey());
                 /* ADD POSITIVE AND NEGATIVE VIEW FOR USER */
                 cal.setText("-"+Integer.toString(model.getCal()));
-                cal.setTextColor(getResources().getColor(R.color.colorGreen));
+                cal.setTextColor(getResources().getColor(R.color.colorPrimary));
 
 
                 cb.setOnClickListener(new View.OnClickListener(){
@@ -75,7 +75,7 @@ public class TodoListFragment extends Fragment{
                         String currentDateTimeString = DateFormat.getDateTimeInstance().format(new Date());
                         History history = new History(name.getText().toString(),Double.parseDouble(cal.getText().toString()),currentDateTimeString);
                         FirebaseDatabase.getInstance().getReference().child("histories").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).push().setValue(history);
-                        Snackbar.make(view, "Added to history success", Snackbar.LENGTH_SHORT)
+                        Snackbar.make(view, "Your activity has been recorded", Snackbar.LENGTH_SHORT)
                                 .setAction("Action", null).show();
 
                         //Modify current calorie too

@@ -74,6 +74,7 @@ public class TodoListFragment extends Fragment{
                         String currentDateTimeString = DateFormat.getDateTimeInstance().format(new Date());
                         History history = new History(name.getText().toString(),Double.parseDouble(cal.getText().toString()),currentDateTimeString);
                         FirebaseDatabase.getInstance().getReference().child("histories").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).push().setValue(history);
+
                         Snackbar.make(view, "Added to history success", Snackbar.LENGTH_SHORT)
                                 .setAction("Action", null).show();
 

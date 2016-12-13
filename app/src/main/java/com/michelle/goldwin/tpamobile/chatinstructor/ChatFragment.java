@@ -51,12 +51,14 @@ public class ChatFragment extends Fragment {
             @Override
             protected void populateView(View v, User model, int position) {
 
+                if(!model.fullname.equals("Goldwin Japar") && !model.fullname.equals("Michelle Neysa")) {
 
                     TextView instructorName     = (TextView) v.findViewById(R.id.lblInstructorName);
                     ImageView instructorImage   = (ImageView) v.findViewById(R.id.imgProfile);
 
                     instructorName.setText(model.fullname);
                     instructorImage.setImageResource(R.drawable.chat);
+                }
 
             }
         };

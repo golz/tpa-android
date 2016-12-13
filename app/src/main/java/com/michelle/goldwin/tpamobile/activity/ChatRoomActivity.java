@@ -41,35 +41,34 @@ public class ChatRoomActivity extends AppCompatActivity {
             @Override
             protected void populateView(View v, ChatMessage model, int position) {
 
+                if ((model.getSender().equals(LoggedUserInformation.getInstance().getFullname()) && model.getReceiver().equals(extra.getString("name"))) || (model.getReceiver().equals(LoggedUserInformation.getInstance().getFullname()) && model.getSender().equals(extra.getString("name")))) {{
 
-                TextView msgTxt = (TextView) v.findViewById(R.id.msgTxt);
-                TextView msgUser = (TextView) v.findViewById(R.id.msgUser);
-                final TextView msgTime = (TextView) v.findViewById(R.id.msgTime);
+                        TextView msgTxt = (TextView) v.findViewById(R.id.msgTxt);
+                        TextView msgUser = (TextView) v.findViewById(R.id.msgUser);
+                        final TextView msgTime = (TextView) v.findViewById(R.id.msgTime);
 
-                if ((model.getSender().equals(LoggedUserInformation.getInstance().getFullname()) && model.getReceiver().equals(extra.getString("name"))) || (model.getReceiver().equals(LoggedUserInformation.getInstance().getFullname()) && model.getSender().equals(extra.getString("name")))) {
-                    {
                         msgTxt.setText(model.getMessage());
                         msgUser.setText(model.getSender());
                         msgTime.setText(android.text.format.DateFormat.format("dd-MM-yyyy (HH:mm:ss)", model.getTime()));
 
-                        if(model.getSender().equalsIgnoreCase(LoggedUserInformation.getInstance().getFullname()))
-                        {
-                            msgUser.setText("You");;
+                        if (model.getSender().equalsIgnoreCase(LoggedUserInformation.getInstance().getFullname())) {
+                            msgUser.setText("You");
+                            ;
                             msgUser.setGravity(Gravity.RIGHT);
                             msgTxt.setGravity(Gravity.RIGHT);
                         }
-                    }
 
-                };
+                    msgTxt.setOnLongClickListener(new View.OnLongClickListener() {
+                        @Override
+                        public boolean onLongClick(View view) {
+                            Snackbar.make(view, msgTime.getText().toString(), Snackbar.LENGTH_SHORT).setAction("Action", null).show();
+                            return false;
+                        }
 
-                msgTxt.setOnLongClickListener(new View.OnLongClickListener() {
-                    @Override
-                    public boolean onLongClick(View view) {
-                        Snackbar.make(view, msgTime.getText().toString(), Snackbar.LENGTH_SHORT).setAction("Action", null).show();
-                        return false;
-                    }
+                    });
 
-                });
+                    };
+                }
             }
         };
 

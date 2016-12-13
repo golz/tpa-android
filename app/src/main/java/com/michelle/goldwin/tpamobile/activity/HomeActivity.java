@@ -172,7 +172,7 @@ public class HomeActivity extends AppCompatActivity
 
         /* CALL `ViewPagerAdapter` */
         ViewPagerAdapter viewPagerAdapter = new ViewPagerAdapter(getSupportFragmentManager());
-        viewPagerAdapter.addFragment(new TodoListFragment(),"Missions");
+        viewPagerAdapter.addFragment(new ChooseMissionFragment(),"Missions");
         viewPagerAdapter.addFragment(new GoogleMapsFragment(),"Gym Location");
         viewPagerAdapter.addFragment(new ChatFragment(),"Instructor");
         /* END CALL */

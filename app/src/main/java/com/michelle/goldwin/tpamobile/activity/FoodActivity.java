@@ -75,6 +75,9 @@ public class FoodActivity extends AppCompatActivity {
 
                     displayFood();
                     Toast.makeText(FoodActivity.this, "Insert success", Toast.LENGTH_SHORT).show();
+
+                    txtFoodName.setText("");
+                    txtFoodCalorie.setText("");
                 }
             }
         });

@@ -119,9 +119,7 @@ public class GoogleMapsFragment extends Fragment implements LocationListener,Goo
             checkLocationPermission();
 
         if(!CheckGooglePlayServices())
-            Toast.makeText(getContext(), "No Google Services", Toast.LENGTH_SHORT).show();
-        else
-            Toast.makeText(getContext(), "Google Services available", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getContext(), "Your Google Services is not available", Toast.LENGTH_SHORT).show();
         /* END CHECKING */
 
         /* BEGIN INITIALIZE */

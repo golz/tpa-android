@@ -1,6 +1,7 @@
 package com.michelle.goldwin.tpamobile.todolist;
 
 
+import android.database.CursorIndexOutOfBoundsException;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
@@ -28,6 +29,7 @@ import com.michelle.goldwin.tpamobile.R;
 import com.michelle.goldwin.tpamobile.global.LoggedUserInformation;
 import com.michelle.goldwin.tpamobile.object.Calorie;
 import com.michelle.goldwin.tpamobile.object.ChatMessage;
+import com.michelle.goldwin.tpamobile.object.CurrentTask;
 import com.michelle.goldwin.tpamobile.object.History;
 import com.michelle.goldwin.tpamobile.object.TodoList;
 
@@ -35,6 +37,7 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -44,7 +47,8 @@ public class TodoListFragment extends Fragment{
 
     private DatabaseReference databaseReference;
     private Bundle extra;
-    private FirebaseListAdapter<TodoList> adapter;
+    private FirebaseListAdapter<CurrentTask> adapter;
+    boolean flag = true;
 
     public TodoListFragment() {
         // Required empty public constructor
@@ -54,58 +58,82 @@ public class TodoListFragment extends Fragment{
 
         ListView listView = (ListView) view.findViewById(R.id.todolistListView);
 
-        adapter = new FirebaseListAdapter<TodoList>(getActivity(),TodoList.class,R.layout.single_todo_list,FirebaseDatabase.getInstance().getReference().child("todolist/Lose Weight")) {
+        adapter = new FirebaseListAdapter<CurrentTask>(getActivity(), CurrentTask.class,R.layout.single_todo_list,FirebaseDatabase.getInstance().getReference()
+                .child("users/"+FirebaseAuth.getInstance().getCurrentUser().getUid()+"/currentTask")) {
             @Override
-            protected void populateView(View v, TodoList model, int position) {
+            protected void populateView(View v, final CurrentTask model, final int position) {
 
                 final TextView name = (TextView) v.findViewById(R.id.todoListTxt);
                 final TextView cal = (TextView) v.findViewById(R.id.todoListCal);
                 CheckBox cb = (CheckBox) v.findViewById(R.id.todoListCheckBox);
 
-                DatabaseReference ref = getRef(position);
-                name.setText(ref.getKey());
-                /* ADD POSITIVE AND NEGATIVE VIEW FOR USER */
-                cal.setText("-"+Integer.toString(model.getCal()));
+                if (!model.isChecked()) {
 
+                    flag = false;
+                    name.setVisibility(v.VISIBLE);
+                    cal.setVisibility(v.VISIBLE);
+                    cb.setVisibility(v.VISIBLE);
 
-                cb.setOnClickListener(new View.OnClickListener(){
-                    @Override
-                    public void onClick(View view) {
-                        String currentDateTimeString = DateFormat.getDateTimeInstance().format(new Date());
-                        History history = new History(name.getText().toString(),Double.parseDouble(cal.getText().toString()),currentDateTimeString);
-                        FirebaseDatabase.getInstance().getReference().child("histories").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).push().setValue(history);
-                        Snackbar.make(view, "Added to history success", Snackbar.LENGTH_SHORT)
-                                .setAction("Action", null).show();
+                    name.setText(model.getName());
+                    /* ADD POSITIVE AND NEGATIVE VIEW FOR USER */
+                    cal.setText("-" + Integer.toString(model.getCal()));
 
-                        //Modify current calorie too
+                    cb.setOnClickListener(new View.OnClickListener() {
+
+                        @Override
+                        public void onClick(View view) {
+                            String currentDateTimeString = DateFormat.getDateTimeInstance().format(new Date());
+                            History history = new History(name.getText().toString(), Double.parseDouble(cal.getText().toString()), currentDateTimeString);
+                            FirebaseDatabase.getInstance().getReference().child("histories").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).push().setValue(history);
+                            Snackbar.make(view, "Your activity has been recorded", Snackbar.LENGTH_SHORT)
+                                    .setAction("Action", null).show();
+
+                            //Modify current calorie too
                         /* BEGIN BATAS GD*/
-                        Date today = new Date();
-                        try {
-                            DateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
-                            Date todayWithZeroTime = formatter.parse(formatter.format(today));
-                            if(LoggedUserInformation.getInstance().getCurrentCalorie() >= Double.parseDouble(cal.getText().toString()))
-                            {
-                                Calorie calorie = new Calorie(LoggedUserInformation.getInstance().getCurrentCalorie() + Double.parseDouble(cal.getText().toString()));
-                                LoggedUserInformation.getInstance().setCurrentCalorie(LoggedUserInformation.getInstance().getCurrentCalorie() + calorie.value);
-                                FirebaseDatabase.getInstance().getReference().child("calories").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child(todayWithZeroTime.toString()).setValue(calorie);
+                            Date today = new Date();
+                            try {
+                                DateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
+                                Date todayWithZeroTime = formatter.parse(formatter.format(today));
+                                if (LoggedUserInformation.getInstance().getCurrentCalorie() >= Double.parseDouble(cal.getText().toString())) {
+                                    Calorie calorie = new Calorie(LoggedUserInformation.getInstance().getCurrentCalorie() + Double.parseDouble(cal.getText().toString()));
+                                    LoggedUserInformation.getInstance().setCurrentCalorie(LoggedUserInformation.getInstance().getCurrentCalorie() + calorie.value);
+                                    FirebaseDatabase.getInstance().getReference().child("calories").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child(todayWithZeroTime.toString()).setValue(calorie);
+
+
+                                } else {
+                                    Snackbar.make(view, "You need to eat something", Snackbar.LENGTH_LONG).setAction("Action", null).show();
+                                }
+                            } catch (ParseException e) {
+                                e.printStackTrace();
                             }
-                            else
-                            {
-                                Snackbar.make(view,"You need to eat something",Snackbar.LENGTH_LONG).setAction("Action",null).show();
-                            }
-                        } catch (ParseException e) {
-                            e.printStackTrace();
-                        }
                         /* END BATAS GD*/
-                    }
-                });
 
-            }
+                            model.setChecked(true);
+                            DatabaseReference ref = adapter.getRef(position);
+
+                            HashMap<String,Object> res = new HashMap<String, Object>();
+                            res.put("checked",true);
+                            FirebaseDatabase.getInstance().getReference().child("users/" + FirebaseAuth.getInstance().getCurrentUser()
+                                    .getUid() + "/currentTask/" + ref.getKey()).updateChildren(res);
+
+                        }
+                    });
+                }
+                else {
+                    name.setVisibility(v.GONE);
+                    cal.setVisibility(v.GONE);
+                    cb.setVisibility(v.GONE);
+                }
+            };
         };
-
         listView.setAdapter(adapter);
+        adapter.notifyDataSetChanged();
+
+        if(flag) FirebaseDatabase.getInstance().getReference().child("users/"+FirebaseAuth.getInstance().getCurrentUser().getUid()+"/currentTask").removeValue();
 
     }
+
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -113,8 +141,13 @@ public class TodoListFragment extends Fragment{
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_todo_list, container, false);
 
-        displayList(view);
+        Bundle bundle = new Bundle();
+        if(bundle != null)
+        {
+            String option = bundle.getString("option");
+        }
 
+        displayList(view);
 
 
         return view;

@@ -6,6 +6,9 @@ import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.ViewPager;
 import android.view.View;
 import android.support.design.widget.NavigationView;
@@ -36,20 +39,25 @@ import com.michelle.goldwin.tpamobile.object.ChatMessage;
 import com.michelle.goldwin.tpamobile.object.History;
 import com.michelle.goldwin.tpamobile.object.User;
 import com.michelle.goldwin.tpamobile.todolist.ChooseMissionFragment;
+import com.michelle.goldwin.tpamobile.todolist.RootFragment;
 import com.michelle.goldwin.tpamobile.todolist.TodoListFragment;
+import com.michelle.goldwin.tpamobile.viewpager.FragmentChangeListener;
 import com.michelle.goldwin.tpamobile.viewpager.ViewPagerAdapter;
 import com.squareup.picasso.Picasso;
 
+import java.io.Serializable;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-public class HomeActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener {
 
-    private TabLayout tabLayout;
-    private ViewPager viewPager;
+public class HomeActivity extends AppCompatActivity
+        implements NavigationView.OnNavigationItemSelectedListener,FragmentChangeListener {
+
+    public ViewPagerAdapter viewPagerAdapter;
+    public TabLayout tabLayout;
+    public ViewPager viewPager;
 
     private ImageView imgProfile;
     private TextView lblUserFullname;
@@ -170,9 +178,14 @@ public class HomeActivity extends AppCompatActivity
         lblUserEmail.setText(loggedUser.getEmail());
         /* END OF NAVIGATION VIEW */
 
+
         /* CALL `ViewPagerAdapter` */
         ViewPagerAdapter viewPagerAdapter = new ViewPagerAdapter(getSupportFragmentManager());
         viewPagerAdapter.addFragment(new TodoListFragment(),"Missions");
+       viewPagerAdapter = new ViewPagerAdapter(getSupportFragmentManager());
+
+        viewPagerAdapter.addFragment(new RootFragment(),"Missions");
+
         viewPagerAdapter.addFragment(new GoogleMapsFragment(),"Gym Location");
         viewPagerAdapter.addFragment(new ChatFragment(),"Instructor");
         /* END CALL */
@@ -236,5 +249,14 @@ public class HomeActivity extends AppCompatActivity
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
+    }
+
+    @Override
+    public void replace(Fragment fragment) {
+        FragmentManager fragmentManager = getSupportFragmentManager();;
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+        fragmentTransaction.replace(R.id.fragment_mission, fragment, fragment.toString());
+        fragmentTransaction.addToBackStack(fragment.toString());
+        fragmentTransaction.commit();
     }
 }

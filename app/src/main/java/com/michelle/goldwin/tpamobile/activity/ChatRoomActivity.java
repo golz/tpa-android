@@ -1,24 +1,30 @@
 package com.michelle.goldwin.tpamobile.activity;
 
 import android.app.ProgressDialog;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.firebase.ui.database.FirebaseListAdapter;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.iid.FirebaseInstanceId;
+import com.google.firebase.messaging.FirebaseMessaging;
 import com.michelle.goldwin.tpamobile.R;
 import com.michelle.goldwin.tpamobile.object.ChatMessage;
 import com.michelle.goldwin.tpamobile.global.LoggedUserInformation;
+import com.michelle.goldwin.tpamobile.viewpager.ViewPagerAdapter;
 
 
 public class ChatRoomActivity extends AppCompatActivity {
@@ -41,19 +47,23 @@ public class ChatRoomActivity extends AppCompatActivity {
             @Override
             protected void populateView(View v, ChatMessage model, int position) {
 
+                TextView msgTxt = (TextView) v.findViewById(R.id.msgTxt);
+                TextView msgUser = (TextView) v.findViewById(R.id.msgUser);
+                final TextView msgTime = (TextView) v.findViewById(R.id.msgTime);
+
                 if ((model.getSender().equals(LoggedUserInformation.getInstance().getFullname()) && model.getReceiver().equals(extra.getString("name"))) || (model.getReceiver().equals(LoggedUserInformation.getInstance().getFullname()) && model.getSender().equals(extra.getString("name")))) {{
 
-                        TextView msgTxt = (TextView) v.findViewById(R.id.msgTxt);
-                        TextView msgUser = (TextView) v.findViewById(R.id.msgUser);
-                        final TextView msgTime = (TextView) v.findViewById(R.id.msgTime);
+                        msgTxt.setVisibility(v.VISIBLE);
+                        msgUser.setVisibility(v.VISIBLE);
+                        msgTime.setVisibility(v.VISIBLE);
 
-                        msgTxt.setText(model.getMessage());
+
+                    msgTxt.setText(model.getMessage());
                         msgUser.setText(model.getSender());
                         msgTime.setText(android.text.format.DateFormat.format("dd-MM-yyyy (HH:mm:ss)", model.getTime()));
 
                         if (model.getSender().equalsIgnoreCase(LoggedUserInformation.getInstance().getFullname())) {
                             msgUser.setText("You");
-                            ;
                             msgUser.setGravity(Gravity.RIGHT);
                             msgTxt.setGravity(Gravity.RIGHT);
                         }
@@ -69,10 +79,18 @@ public class ChatRoomActivity extends AppCompatActivity {
 
                     };
                 }
+                else {
+
+                    msgTxt.setVisibility(v.GONE);
+                    msgUser.setVisibility(v.GONE);
+                    msgTime.setVisibility(v.GONE);
+
+                }
             }
         };
 
         listMsg.setAdapter(adapter);
+        adapter.notifyDataSetChanged();
     }
 
     @Override
@@ -105,15 +123,45 @@ public class ChatRoomActivity extends AppCompatActivity {
                     ChatMessage chat = new ChatMessage(inp.getText().toString(), LoggedUserInformation.getInstance().getFullname(),extra.getString("name"),extra.getString("key"));
                     FirebaseDatabase.getInstance().getReference().child("chats").push().setValue(chat);
                     inp.setText("");
-                    displayChat();
                 }
             }
         });
+
+        // Notification Start Here
+
+        if(getIntent().getExtras() != null)
+        {
+            for (String key : getIntent().getExtras().keySet()) {
+                String value = getIntent().getExtras().getString(key);
+
+                if (key.equals("ChatRoom") && value.equals("True")) {
+                    Intent intent = new Intent(this,ChatRoomActivity.class);
+                    intent.putExtra("value", "Haloha");
+                    startActivity(intent);
+                    finish();
+                }
+
+
+                subscribeToPushService();
+            }
+
+        }
+
+
     }
 
-    /**
-     * ATTENTION: This was auto-generated to implement the App Indexing API.
-     * See https://g.co/AppIndexing/AndroidStudio for more information.
+    private void subscribeToPushService() {
+        FirebaseMessaging.getInstance().subscribeToTopic("news");
 
-     */
+        Log.d("AndroidBash", "Subscribed");
+        Toast.makeText(ChatRoomActivity.this, "Subscribed", Toast.LENGTH_SHORT).show();
+
+        String token = FirebaseInstanceId.getInstance().getToken();
+
+        // Log and toast
+        Log.d("AndroidBash", token);
+        Toast.makeText(ChatRoomActivity.this, token, Toast.LENGTH_SHORT).show();
+    }
+
+
 }

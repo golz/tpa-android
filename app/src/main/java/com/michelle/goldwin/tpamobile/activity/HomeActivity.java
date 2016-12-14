@@ -21,6 +21,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.facebook.login.LoginManager;
 import com.google.firebase.auth.FirebaseAuth;
@@ -121,11 +122,21 @@ public class HomeActivity extends AppCompatActivity
         } catch (ParseException e) {
             e.printStackTrace();
         }
+        //Toast.makeText(this, LoggedUserInformation.getInstance().getCurrentCalorie().toString(), Toast.LENGTH_SHORT).show();
+
         /* BEGIN READ OLD DATA WITH DATABASE REFERENCE */
         /* END INITIALIZE */
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
+        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivity(new Intent(getApplicationContext(),EatActivity.class));
+            }
+        });
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -181,18 +192,20 @@ public class HomeActivity extends AppCompatActivity
 
         /* CALL `ViewPagerAdapter` */
         ViewPagerAdapter viewPagerAdapter = new ViewPagerAdapter(getSupportFragmentManager());
-        viewPagerAdapter.addFragment(new TodoListFragment(),"Missions");
-       viewPagerAdapter = new ViewPagerAdapter(getSupportFragmentManager());
-
-        viewPagerAdapter.addFragment(new RootFragment(),"Missions");
-
-        viewPagerAdapter.addFragment(new GoogleMapsFragment(),"Gym Location");
-        viewPagerAdapter.addFragment(new ChatFragment(),"Instructor");
+        viewPagerAdapter.addFragment(new TodoListFragment(),"");
+        viewPagerAdapter = new ViewPagerAdapter(getSupportFragmentManager());
+        viewPagerAdapter.addFragment(new RootFragment(),"");
+        viewPagerAdapter.addFragment(new GoogleMapsFragment(),"");
+        viewPagerAdapter.addFragment(new ChatFragment(),"");
         /* END CALL */
 
         /* COMBINE */
         viewPager.setAdapter(viewPagerAdapter);
         tabLayout.setupWithViewPager(viewPager);
+        tabLayout.setBackgroundColor(getResources().getColor(R.color.colorPrimary));
+        tabLayout.getTabAt(0).setIcon(R.drawable.mission);
+        tabLayout.getTabAt(1).setIcon(R.drawable.map);
+        tabLayout.getTabAt(2).setIcon(R.drawable.whitechat);
     }
 
     @Override

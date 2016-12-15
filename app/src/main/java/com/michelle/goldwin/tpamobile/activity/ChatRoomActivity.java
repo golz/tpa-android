@@ -59,7 +59,7 @@ public class ChatRoomActivity extends AppCompatActivity {
 
 
                     msgTxt.setText(model.getMessage());
-                        msgUser.setText(model.getSender());
+                        msgUser.setText(model.getSender().toString().split(" ")[0]);
                         msgTime.setText(android.text.format.DateFormat.format("dd-MM-yyyy (HH:mm:ss)", model.getTime()));
 
                         if (model.getSender().equalsIgnoreCase(LoggedUserInformation.getInstance().getFullname())) {
@@ -148,7 +148,7 @@ public class ChatRoomActivity extends AppCompatActivity {
 
         }
 
-
+        scrollMyListViewToBottom();
     }
 
     private void subscribeToPushService() {

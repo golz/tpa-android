@@ -89,7 +89,7 @@ public class ChooseMissionFragment extends Fragment{
                 fragment.setArguments(bundle);
                 transaction.replace(R.id.root_fragment,fragment);
                 transaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
-                transaction.commit();
+                transaction.addToBackStack(null).commit();
 
             }
         });

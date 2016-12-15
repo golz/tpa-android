@@ -54,19 +54,34 @@ public class ChatFragment extends Fragment {
                 TextView instructorName     = (TextView) v.findViewById(R.id.lblInstructorName);
                 ImageView instructorImage   = (ImageView) v.findViewById(R.id.imgProfile);
 
+                if(FirebaseAuth.getInstance().getCurrentUser().getUid().equals("9DOHdZE6tvelBdyBWtwZuMzKPuo1") || FirebaseAuth.getInstance().getCurrentUser().getUid().equals("rL9F6eUljrWbTfGZoStgV05n1BH3")) {
 
-                if(!model.fullname.equals(LoggedUserInformation.getInstance().getFullname())) {
-                    instructorImage.setVisibility(v.VISIBLE);
-                    instructorName.setVisibility(v.VISIBLE);
+                    if (!model.fullname.equals(LoggedUserInformation.getInstance().getFullname())) {
+                        instructorImage.setVisibility(v.VISIBLE);
+                        instructorName.setVisibility(v.VISIBLE);
 
-                    instructorName.setText(model.fullname);
-                    instructorImage.setImageResource(R.drawable.chat);
+                        instructorName.setText(model.fullname);
+                        instructorImage.setImageResource(R.drawable.chat);
+                    } else {
+                        instructorImage.setVisibility(v.GONE);
+                        instructorName.setVisibility(v.GONE);
+                    }
                 }
                 else {
-                    instructorImage.setVisibility(v.GONE);
-                    instructorName.setVisibility(v.GONE);
+                    if (model.fullname.equals("Goldwin Japar") || model.fullname.equals("Michelle Neysa")) {
+                        instructorImage.setVisibility(v.VISIBLE);
+                        instructorName.setVisibility(v.VISIBLE);
+
+                        instructorName.setText(model.fullname);
+                        instructorImage.setImageResource(R.drawable.chat);
+                    } else {
+                        instructorImage.setVisibility(v.GONE);
+                        instructorName.setVisibility(v.GONE);
+                    }
                 }
-            }
+
+                }
+
         };
 
         instructorListView.setAdapter(userFirebaseListAdapter);
@@ -94,42 +109,5 @@ public class ChatFragment extends Fragment {
 
         return view;
     }
-    public InstructorListAdapter getInstructorAdapter()
-    {
-        final InstructorListAdapter instructorListAdapter = new InstructorListAdapter(getContext());
 
-
-        if(FirebaseAuth.getInstance().getCurrentUser().getUid().equals("9DOHdZE6tvelBdyBWtwZuMzKPuo1") || FirebaseAuth.getInstance().getCurrentUser().getUid().equals("rL9F6eUljrWbTfGZoStgV05n1BH3")){
-
-            databaseReference = FirebaseDatabase.getInstance().getReference().child("users");
-
-            databaseReference.addValueEventListener(new ValueEventListener() {
-                @Override
-                public void onDataChange(DataSnapshot dataSnapshot) {
-
-                    if(dataSnapshot.exists()) {
-                        for (DataSnapshot childData : dataSnapshot.getChildren()) {
-
-                            String name = childData.getValue(User.class).fullname.toString();
-                            if (!name.equals("Goldwin Japar") && !name.equals("Michelle Neysa")) {
-                                instructorListAdapter.addInstructor(name);
-                                System.out.println(name);
-                            }
-                        }
-                    }
-                }
-
-                @Override
-                public void onCancelled(DatabaseError databaseError) {
-
-                }
-            });
-        }
-        else {
-            instructorListAdapter.addInstructor("Goldwin Japar");
-            instructorListAdapter.addInstructor("Michelle Neysa");
-        }
-
-        return instructorListAdapter;
-    }
 }

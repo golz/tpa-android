@@ -3,9 +3,12 @@ package com.michelle.goldwin.tpamobile.todolist;
 
 import android.database.CursorIndexOutOfBoundsException;
 import android.os.Bundle;
+import android.provider.ContactsContract;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -65,7 +68,7 @@ public class TodoListFragment extends Fragment{
 
                 final TextView name = (TextView) v.findViewById(R.id.todoListTxt);
                 final TextView cal = (TextView) v.findViewById(R.id.todoListCal);
-                CheckBox cb = (CheckBox) v.findViewById(R.id.todoListCheckBox);
+                final CheckBox cb = (CheckBox) v.findViewById(R.id.todoListCheckBox);
 
                 if (!model.isChecked()) {
 
@@ -94,27 +97,32 @@ public class TodoListFragment extends Fragment{
                             try {
                                 DateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
                                 Date todayWithZeroTime = formatter.parse(formatter.format(today));
-                                if (LoggedUserInformation.getInstance().getCurrentCalorie() >= Double.parseDouble(cal.getText().toString())) {
+                                if (LoggedUserInformation.getInstance().getCurrentCalorie() >= Math.abs(Double.parseDouble(cal.getText().toString()))
+                                        ) {
                                     Calorie calorie = new Calorie(LoggedUserInformation.getInstance().getCurrentCalorie() + Double.parseDouble(cal.getText().toString()));
                                     LoggedUserInformation.getInstance().setCurrentCalorie(LoggedUserInformation.getInstance().getCurrentCalorie() + calorie.value);
                                     FirebaseDatabase.getInstance().getReference().child("calories").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child(todayWithZeroTime.toString()).setValue(calorie);
 
+                                    model.setChecked(true);
+                                    DatabaseReference ref = adapter.getRef(position);
+
+                                    HashMap<String,Object> res = new HashMap<String, Object>();
+                                    res.put("checked",true);
+                                    FirebaseDatabase.getInstance().getReference().child("users/" + FirebaseAuth.getInstance().getCurrentUser()
+                                            .getUid() + "/currentTask/" + ref.getKey()).updateChildren(res);
+
+                                    checker();
 
                                 } else {
                                     Snackbar.make(view, "You need to eat something", Snackbar.LENGTH_LONG).setAction("Action", null).show();
+                                    cb.toggle();
                                 }
                             } catch (ParseException e) {
                                 e.printStackTrace();
                             }
                         /* END BATAS GD*/
 
-                            model.setChecked(true);
-                            DatabaseReference ref = adapter.getRef(position);
 
-                            HashMap<String,Object> res = new HashMap<String, Object>();
-                            res.put("checked",true);
-                            FirebaseDatabase.getInstance().getReference().child("users/" + FirebaseAuth.getInstance().getCurrentUser()
-                                    .getUid() + "/currentTask/" + ref.getKey()).updateChildren(res);
 
                         }
                     });
@@ -129,10 +137,48 @@ public class TodoListFragment extends Fragment{
         listView.setAdapter(adapter);
         adapter.notifyDataSetChanged();
 
-        if(flag) FirebaseDatabase.getInstance().getReference().child("users/"+FirebaseAuth.getInstance().getCurrentUser().getUid()+"/currentTask").removeValue();
 
     }
 
+    public void checker(){
+
+
+        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference().child("users/"+FirebaseAuth.getInstance().getCurrentUser()
+                .getUid()+"/currentTask");
+
+
+        databaseReference.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+
+                boolean flag = true;
+                for(DataSnapshot child : dataSnapshot.getChildren()){
+                    if (child.child("checked").getValue().toString().equalsIgnoreCase("false")){
+                            flag = false;
+                    }
+                }
+
+
+                if(flag){
+                    FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
+                    Fragment fragment = new ChooseMissionFragment();
+                    fragmentTransaction.replace(R.id.root_fragment,fragment);
+                    fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
+                    fragmentTransaction.addToBackStack(null).commit();
+
+                    FirebaseDatabase.getInstance().getReference().child("users/"+FirebaseAuth.getInstance().getCurrentUser().getUid()+"/currentTask").removeValue();
+
+                }
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+
+    }
 
 
     @Override
@@ -140,12 +186,6 @@ public class TodoListFragment extends Fragment{
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_todo_list, container, false);
-
-        Bundle bundle = new Bundle();
-        if(bundle != null)
-        {
-            String option = bundle.getString("option");
-        }
 
         displayList(view);
 

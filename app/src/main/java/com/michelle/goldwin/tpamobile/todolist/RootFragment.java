@@ -43,8 +43,16 @@ public class RootFragment extends Fragment {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
 
-                if(dataSnapshot.hasChild("currentTask")) flag = true;
-                else flag = false;
+                if(dataSnapshot.hasChild("currentTask")) {
+                    flag = true;
+                    System.out.println("ada Anak");
+                }
+
+                else {
+                    flag = false;
+                    System.out.println("Gak ada");
+                }
+
 
         }
             @Override
@@ -57,7 +65,7 @@ public class RootFragment extends Fragment {
     {
         transaction.replace(R.id.root_fragment, new ChooseMissionFragment());
     }
-    else    transaction.replace(R.id.root_fragment, new TodoListFragment());
+    else transaction.replace(R.id.root_fragment, new TodoListFragment());
 
     transaction.commit();
 

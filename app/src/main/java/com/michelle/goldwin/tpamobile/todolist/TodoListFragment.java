@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -48,7 +49,7 @@ public class TodoListFragment extends Fragment{
     private DatabaseReference databaseReference;
     private Bundle extra;
     private FirebaseListAdapter<CurrentTask> adapter;
-    boolean flag = true;
+    int flag = 0;
 
     public TodoListFragment() {
         // Required empty public constructor
@@ -58,8 +59,11 @@ public class TodoListFragment extends Fragment{
 
         ListView listView = (ListView) view.findViewById(R.id.todolistListView);
 
+        flag = 0;
         adapter = new FirebaseListAdapter<CurrentTask>(getActivity(), CurrentTask.class,R.layout.single_todo_list,FirebaseDatabase.getInstance().getReference()
                 .child("users/"+FirebaseAuth.getInstance().getCurrentUser().getUid()+"/currentTask")) {
+
+
             @Override
             protected void populateView(View v, final CurrentTask model, final int position) {
 
@@ -69,7 +73,7 @@ public class TodoListFragment extends Fragment{
 
                 if (!model.isChecked()) {
 
-                    flag = false;
+                    flag++;
                     name.setVisibility(v.VISIBLE);
                     cal.setVisibility(v.VISIBLE);
                     cb.setVisibility(v.VISIBLE);
@@ -116,6 +120,7 @@ public class TodoListFragment extends Fragment{
                             FirebaseDatabase.getInstance().getReference().child("users/" + FirebaseAuth.getInstance().getCurrentUser()
                                     .getUid() + "/currentTask/" + ref.getKey()).updateChildren(res);
 
+
                         }
                     });
                 }
@@ -124,12 +129,20 @@ public class TodoListFragment extends Fragment{
                     cal.setVisibility(v.GONE);
                     cb.setVisibility(v.GONE);
                 }
+
+                System.out.println(flag);
             };
+
+
         };
+
         listView.setAdapter(adapter);
+
+
         adapter.notifyDataSetChanged();
 
-        if(flag) FirebaseDatabase.getInstance().getReference().child("users/"+FirebaseAuth.getInstance().getCurrentUser().getUid()+"/currentTask").removeValue();
+
+
 
     }
 
@@ -148,6 +161,9 @@ public class TodoListFragment extends Fragment{
         }
 
         displayList(view);
+
+
+
 
 
         return view;

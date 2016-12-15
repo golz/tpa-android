@@ -67,6 +67,7 @@ public class ChooseMissionFragment extends Fragment{
 
                             String name = child.getKey().toString();
                             int cal = Integer.parseInt(child.child("cal").getValue().toString());
+
                             CurrentTask currentTask = new CurrentTask(name,cal);
                             FirebaseDatabase.getInstance().getReference().child("users/"+FirebaseAuth.getInstance().getCurrentUser().getUid()+"/currentTask").push().setValue(currentTask);
 
@@ -79,7 +80,7 @@ public class ChooseMissionFragment extends Fragment{
                     }
                 });
 
-                FragmentTransaction transaction =   getFragmentManager().beginTransaction();
+                FragmentTransaction transaction = getFragmentManager().beginTransaction();
 
                 Bundle bundle = new Bundle();
                 bundle.putString("option",spinner.getSelectedItem().toString());

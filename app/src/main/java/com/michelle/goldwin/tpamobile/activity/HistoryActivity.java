@@ -8,6 +8,7 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.firebase.ui.database.FirebaseListAdapter;
 import com.google.firebase.auth.FirebaseAuth;
@@ -86,7 +87,6 @@ public class HistoryActivity extends AppCompatActivity {
 
         /* BEGIN INITIALIZATION */
         firebaseAuth = FirebaseAuth.getInstance();
-
         displayHistory();
         displayCurrentCalories();
         /* END INITIALIZATION */

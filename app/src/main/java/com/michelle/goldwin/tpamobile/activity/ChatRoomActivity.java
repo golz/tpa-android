@@ -123,6 +123,7 @@ public class ChatRoomActivity extends AppCompatActivity {
                     ChatMessage chat = new ChatMessage(inp.getText().toString(), LoggedUserInformation.getInstance().getFullname(),extra.getString("name"),extra.getString("key"));
                     FirebaseDatabase.getInstance().getReference().child("chats").push().setValue(chat);
                     inp.setText("");
+                    scrollMyListViewToBottom();
                 }
             }
         });
@@ -154,14 +155,25 @@ public class ChatRoomActivity extends AppCompatActivity {
         FirebaseMessaging.getInstance().subscribeToTopic("news");
 
         Log.d("AndroidBash", "Subscribed");
-        Toast.makeText(ChatRoomActivity.this, "Subscribed", Toast.LENGTH_SHORT).show();
+        //Toast.makeText(ChatRoomActivity.this, "Subscribed", Toast.LENGTH_SHORT).show();
 
         String token = FirebaseInstanceId.getInstance().getToken();
 
         // Log and toast
         Log.d("AndroidBash", token);
-        Toast.makeText(ChatRoomActivity.this, token, Toast.LENGTH_SHORT).show();
+        //Toast.makeText(ChatRoomActivity.this, token, Toast.LENGTH_SHORT).show();
     }
 
+    //Auto Scroll to Latest
+    private void scrollMyListViewToBottom() {
+        final ListView listMsg = (ListView) findViewById(R.id.msgList);
+        listMsg.post(new Runnable() {
+            @Override
+            public void run() {
+                // Select the last row so it will scroll into view...
+                listMsg.setSelection(adapter.getCount() - 1);
+            }
+        });
+    }
 
 }

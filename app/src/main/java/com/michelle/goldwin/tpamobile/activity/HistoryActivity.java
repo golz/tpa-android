@@ -73,9 +73,9 @@ public class HistoryActivity extends AppCompatActivity {
         TextView currentCalories = (TextView) findViewById(R.id.totalCalories);
         Double userCalories = LoggedUserInformation.getInstance().getCurrentCalorie();
         currentCalories.setText("Today Calories : "+ userCalories+" Calories");
-        if(userCalories >= 1500 && userCalories <= 2500)
+        if(userCalories >= 1000 && userCalories <= 1500)
             currentCalories.setTextColor(getResources().getColor(R.color.colorGreen));
-        else if((userCalories >= 1300 && userCalories <= 1499) || (userCalories >= 2501 && userCalories <= 2700))
+        else if((userCalories >= 800 && userCalories <= 999) || (userCalories >= 1501 && userCalories <= 1700))
             currentCalories.setTextColor(getResources().getColor(R.color.colorPrimary));
         else
             currentCalories.setTextColor(getResources().getColor(R.color.colorRed));
